@@ -1,10 +1,11 @@
-from typing import Iterator
+from typing import Iterator, Union, Optional, List
 from dataclasses import dataclass, asdict
 from datetime import datetime
-import bz2
-from copy import deepcopy
-from lxml import etree
 from pathlib import Path
+from copy import deepcopy
+import bz2
+
+from lxml import etree
 
 
 @dataclass
@@ -31,7 +32,7 @@ class Page:
     page_id: int
     title: str
     timestamp: datetime
-    redirect_title: str | None
+    redirect_title: Union[str, None]
     revision_id: str
     text: str
 
@@ -118,7 +119,7 @@ class WikiDumpExtractor:
         while page_xml.getprevious() is not None:
             del page_xml.getparent()[0]
 
-    def iter_pages(self) -> Iterator[Page]:
+    def iter_pages(self, limit: Optional[int] = None) -> Iterator[Page]:
         """Iterate over all pages in the dump file.
 
         The returned elements are Page objects with fields title, page_id,
@@ -126,10 +127,12 @@ class WikiDumpExtractor:
         """
         for page_xml in self._iter_page_elements():
             yield Page.from_xml(page_xml, self.namespace)
+            if limit is not None and len(self._iter_page_elements()) >= limit:
+                break
 
     def iter_page_batches(
-        self, batch_size: int, limit: int | None = None
-    ) -> Iterator[list[Page]]:
+        self, batch_size: int, limit: Optional[int] = None
+    ) -> Iterator[List[Page]]:
         """Iterate over pages in batches.
 
         Each return is a list of Page objects with fields title, page_id,
@@ -153,7 +156,7 @@ class WikiDumpExtractor:
         """
         batch = []
         batches_returned = 0
-        for page in self.iter_pages():
+        for page in self.iter_pages(limit):
             batch.append(page)
             if len(batch) >= batch_size:
                 yield batch
@@ -164,7 +167,9 @@ class WikiDumpExtractor:
         if batch:
             yield batch
 
-    def extract_pages_to_new_xml(self, output_file: str | Path, limit: int | None = 50):
+    def extract_pages_to_new_xml(
+        self, output_file: Union[str, Path], limit: Union[int, None] = 50
+    ):
         """Create a smaller XML dump file by extracting a limited number of pages.
 
         This is useful for debugging, testing, creating examples, etc.
