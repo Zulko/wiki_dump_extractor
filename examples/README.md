@@ -1,8 +1,9 @@
 # Examples
 
+- [Extract pages from a wiki dump](extract_pages.py)
+- [Extract pages from a wiki dump and save to a new XML file](extract_pages_to_new_xml.py)
 
-
-## About the tiny dump
+The tiny dump file for produced using:
 
 
 ```python
