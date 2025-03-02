@@ -39,6 +39,15 @@ for i, batch in enumerate(batches):
 
 ## Installation
 
+
 ```bash
 pip install wiki-dump-extractor
 ```
+
+Or from the source in development mode:
+
+```bash
+pip install -e .
+```
+
+To run the tests just use `pytest` in the root directory.
