@@ -119,7 +119,7 @@ class WikiDumpExtractor:
         while page_xml.getprevious() is not None:
             del page_xml.getparent()[0]
 
-    def iter_pages(self, limit: Optional[int] = None) -> Iterator[Page]:
+    def iter_pages(self) -> Iterator[Page]:
         """Iterate over all pages in the dump file.
 
         The returned elements are Page objects with fields title, page_id,
@@ -127,8 +127,6 @@ class WikiDumpExtractor:
         """
         for page_xml in self._iter_page_elements():
             yield Page.from_xml(page_xml, self.namespace)
-            if limit is not None and len(self._iter_page_elements()) >= limit:
-                break
 
     def iter_page_batches(
         self, batch_size: int, limit: Optional[int] = None
@@ -156,7 +154,7 @@ class WikiDumpExtractor:
         """
         batch = []
         batches_returned = 0
-        for page in self.iter_pages(limit):
+        for page in self.iter_pages():
             batch.append(page)
             if len(batch) >= batch_size:
                 yield batch
