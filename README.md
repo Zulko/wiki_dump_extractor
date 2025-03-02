@@ -32,9 +32,9 @@ from wiki_dump_extractor import WikiDumpExtractor
 dump_file = "enwiki-20220301-pages-articles-multistream.xml.bz2"
 extractor = WikiDumpExtractor(file_path=dump_file)
 batches = extractor.iter_page_batches(batch_size=1000, limit=10)
-for batch in enumerate(batches):
+for i, batch in enumerate(batches):
     df = pandas.DataFrame([page.to_dict() for page in batch])
-    df.to_parquet("batch.parquet")
+    df.to_csv(f"batch_{i}.csv")
 ```
 
 ## Installation
