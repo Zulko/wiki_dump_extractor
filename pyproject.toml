@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "wiki_dump_extractor"
+version = "0.1.0"
+description = "A Python package for extracting and processing Wikipedia data"
+readme = "README.md"
+authors = [
+    {name = "Zulko"}
+]
+license = {text = "MIT"}
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Topic :: Text Processing :: Markup",
+    "Topic :: Scientific/Engineering :: GIS",
+]
+requires-python = ">=3.8"
+dependencies = [
+    "lxml>=4.9.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest>=7.0.0",
+    "pytest-cov>=4.0.0",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/zulko/wiki_extractor"
+
+[tool.setuptools]
+package-dir = {"" = "src"}
+packages = ["wiki_dump_extractor"]
+
+[tool.pytest.ini_options]
+testpaths = ["test"]
+python_files = "test_*.py"
+python_functions = "test_*"
+addopts = "--cov=wiki_dump_extractor"
