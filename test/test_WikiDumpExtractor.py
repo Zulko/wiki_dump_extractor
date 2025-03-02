@@ -1,7 +1,6 @@
 """Tests for the main module."""
 
 from src.wiki_dump_extractor.wiki_dump_extractor import WikiDumpExtractor
-import pytest
 
 
 def test_WikiDumpExtractor():

@@ -1,7 +1,8 @@
+from typing import Tuple, Optional, List
 import re
 
 
-def extract_geospatial_coordinates(text: str) -> tuple[float, float] | None:
+def extract_geospatial_coordinates(text: str) -> Optional[Tuple[float, float]]:
     """Return geographical coordinates (latitude, longitude) from Wikipedia page text.
 
     Parameters
@@ -79,12 +80,12 @@ def extract_geospatial_coordinates(text: str) -> tuple[float, float] | None:
     return None
 
 
-def extract_categories(text: str) -> list[str]:
+def extract_categories(text: str) -> List[str]:
     """Extract categories from Wikipedia text using regex patterns."""
     return re.findall(r"\[\[Category:(.*?)\]\]", text)
 
 
-def extract_infobox_category(text: str) -> str | None:
+def extract_infobox_category(text: str) -> Optional[str]:
     """Extract the broad category from the infobox of a Wikipedia page.
 
     Parameters
@@ -118,7 +119,7 @@ _date_patterns = [
 _date_pattern_re = re.compile("|".join(_date_patterns), re.IGNORECASE)
 
 
-def extract_dates(text: str) -> list[str]:
+def extract_dates(text: str) -> List[str]:
     """Extract dates from Wikipedia text using regex patterns."""
     return _date_pattern_re.findall(text)
 
