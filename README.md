@@ -6,7 +6,7 @@ A python library to extract and analyze pages from a wiki dump.
 
 - Extract pages from a wiki dump
 - Be easy to install and run
-- Be fast
+- Be fast (currently ~2000 pages per second on uncompressed archive, 250/s on .bz2 archive)
 - Be memory efficient
 - Allow for batch processing
 - Offer a few light utilities for page analysis (e.g. extracting tags and category)
