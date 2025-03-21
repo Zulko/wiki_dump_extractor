@@ -24,10 +24,10 @@ def test_WikiDumpExtractor_extract_pages_to_new_xml(tmp_path):
 def test_WikiXmlDumpExtractor_iter_page_batches():
     """Test the iter_page_batches method."""
     extractor = WikiXmlDumpExtractor("test/data/tiny_dump.xml.bz2")
-    batches = list(extractor.iter_page_batches(batch_size=5, limit=10))
-    assert len(batches) == 10
+    batches = list(extractor.iter_page_batches(batch_size=5, page_limit=18))
+    assert len(batches) == 4
     assert len(batches[0]) == 5
-    assert len(batches[-1]) == 5
+    assert len(batches[-1]) == 3
 
 
 def test_WikiXmlDumpExtractor_extract_pages_to_avro(tmp_path):
@@ -37,9 +37,9 @@ def test_WikiXmlDumpExtractor_extract_pages_to_avro(tmp_path):
     extractor.extract_pages_to_avro(
         tmp_path / "tiny_dump.avro",
         batch_size=10,
-        limit=7,
+        page_limit=70,
         ignored_fields=ignored_fields,
-        ignore_redirects=False,
+        redirects_file=None,
     )
 
     assert (tmp_path / "tiny_dump.avro").exists()

@@ -1,5 +1,31 @@
 from typing import Tuple, Optional, List
+
+from dataclasses import dataclass, field
 import re
+import regex
+
+
+def get_short_description(text: str) -> str:
+    """Return the short description of the page."""
+    # Look for {{short description|...}} template
+    match = re.search(r"\{\{short description\|(.*?)\}\}", text, re.IGNORECASE)
+    if match:
+        return match.group(1).strip()
+    return ""
+
+
+def remove_comments_and_citations(text: str) -> str:
+    """Return the text without comments and citations."""
+    text = re.sub(r"<!--.*?-->", " ", text)
+    text = re.sub(r"{{Cite.*?}}", " ", text)
+    text = re.sub(r"{{citation.*?}}", " ", text)
+    text = re.sub(r"{{sfn.*?}}", " ", text)
+    text = re.sub(r"<ref>.*?</ref>", " ", text)
+    text = re.sub(r"<ref.*?/>", " ", text)
+    # Replace file/image links with their captions
+    text = re.sub(r"\[\[File:.*?(?:\|.*?)*\|(.*?)\]\]", r"\n\n(caption: \1)\n\n", text)
+    text = re.sub(r"\[\[Image:.*?(?:\|.*?)*\|(.*?)\]\]", r"\n\n(caption: \1)\n\n", text)
+    return text
 
 
 def extract_geospatial_coordinates(text: str) -> Optional[Tuple[float, float]]:
@@ -100,6 +126,27 @@ def extract_infobox_category(text: str) -> Optional[str]:
         broad_category = broad_category.strip()
 
 
+# Compile the pattern once for better performance
+BRACE_PATTERN = regex.compile(r"\{\{(?:[^{}]|(?R))*\}\}")
+
+
+def _find_matching_braces(text, start_pos):
+    """Find the position of the matching closing braces from a starting position."""
+    # Assume we're already inside a {{ pair, so we need to find the matching }}
+    # Extract the substring starting from start_pos
+    substring = text[start_pos:]
+
+    # Look for the pattern that matches balanced braces
+    match = BRACE_PATTERN.search(substring)
+
+    if match:
+        # Calculate the end position in the original string
+        # Add 2 for the closing braces
+        return start_pos + match.end()
+
+    return -1
+
+
 def parse_infobox(page_text: str) -> dict:
     """Parse the infobox from a Wikipedia page text.
 
@@ -131,30 +178,12 @@ def parse_infobox(page_text: str) -> dict:
     """
 
     # Find the infobox pattern with proper handling of nested templates
-    def find_matching_braces(text, start_pos):
-        """Find the position of the matching closing braces from a starting position."""
-        stack = []
-        i = start_pos
-        while i < len(text):
-            if text[i : i + 2] == "{{":
-                stack.append("{{")
-                i += 2
-            elif text[i : i + 2] == "}}":
-                if not stack:
-                    return i
-                stack.pop()
-                i += 2
-                if not stack:
-                    return i
-            else:
-                i += 1
-        return -1  # No matching braces found
 
     infobox_start = page_text.find("{{Infobox")
     if infobox_start == -1:
         return {}
 
-    infobox_end = find_matching_braces(page_text, infobox_start)
+    infobox_end = _find_matching_braces(page_text, infobox_start)
     if infobox_end == -1:
         return {}
 
@@ -217,11 +246,6 @@ def has_date(text: str) -> bool:
     return bool(_date_pattern_re.search(text))
 
 
-import re
-from dataclasses import dataclass, field
-from typing import List
-
-
 @dataclass
 class Section:
     level: int
@@ -244,6 +268,66 @@ class Section:
             return f"{self.parent.title_with_parents} > {self.title}"
         else:
             return self.title
+
+    def with_cleaned_text(self):
+        return Section(
+            level=self.level,
+            title=self.title,
+            text=remove_comments_and_citations(self.text),
+        )
+
+    @classmethod
+    def from_page_text(cls, text: str) -> "Section":
+        """Build a tree of Section objects from a page text."""
+        root_section = Section(level=0, title="Root", text="")
+        section_stack = [root_section]
+
+        # Pattern to match section headers
+        header_pattern = re.compile(r"^(=+)\s*(.*?)\s*\1$", re.MULTILINE)
+
+        # Find all section headers
+        header_matches = list(header_pattern.finditer(text))
+
+        # If no headers found, put all text in root section
+        if not header_matches:
+            root_section.text = text
+            return root_section
+
+        # Process each section
+        for i, match in enumerate(header_matches):
+            # Get section level and title
+            level = len(match.group(1))
+            title = match.group(2)
+
+            # Get section text (includes the header itself)
+            start = match.start()
+            end = (
+                header_matches[i + 1].start()
+                if i < len(header_matches) - 1
+                else len(text)
+            )
+            section_text = text[start:end]
+
+            # Add text before the first section to root
+            if i == 0 and start > 0:
+                root_section.text = text[:start]
+
+            # Create new section
+            new_section = Section(level=level, title=title, text=section_text)
+
+            # Pop sections from stack until appropriate parent is found
+            while len(section_stack) > 1 and section_stack[-1].level >= level:
+                section_stack.pop()
+
+            # Add as child to parent
+            parent = section_stack[-1]
+            parent.children.append(new_section)
+            new_section.parent = parent
+
+            # Add to stack
+            section_stack.append(new_section)
+
+        return root_section
 
     @classmethod
     def from_page_section_texts(cls, texts: List[str]) -> "Section":

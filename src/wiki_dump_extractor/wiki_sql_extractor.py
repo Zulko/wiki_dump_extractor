@@ -5,6 +5,21 @@ from tqdm.auto import tqdm
 
 
 class WikiSqlExtractor:
+    """
+    Extracts data from a Wikipedia SQL dump.
+
+    Parameters
+    ----------
+    file_path : str
+        The path to the Wikipedia SQL dump file.
+
+    Examples
+    --------
+
+    >>> extractor = WikiSqlExtractor("enwiki-20240301-pages-articles-multistream.xml.bz2")
+    >>> df = extractor.to_pandas_dataframe(columns=[...])
+    """
+
     def __init__(self, file_path):
         self.file_path = file_path
         self.columns = self._get_column_names()
