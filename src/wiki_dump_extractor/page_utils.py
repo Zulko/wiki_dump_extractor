@@ -22,10 +22,33 @@ def remove_comments_and_citations(text: str) -> str:
     text = re.sub(r"{{sfn.*?}}", " ", text)
     text = re.sub(r"<ref>.*?</ref>", " ", text)
     text = re.sub(r"<ref.*?/>", " ", text)
-    # Replace file/image links with their captions
-    text = re.sub(r"\[\[File:.*?(?:\|.*?)*\|(.*?)\]\]", r"\n\n(caption: \1)\n\n", text)
-    text = re.sub(r"\[\[Image:.*?(?:\|.*?)*\|(.*?)\]\]", r"\n\n(caption: \1)\n\n", text)
     return text
+
+
+def replace_file_links_with_captions(text):
+    def replace_file_tag(match):
+        # Extract the full content between File/Image: and ]]
+        content = match.group(2)
+        parts = [part.strip() for part in content.split("|")]
+        if len(parts) == 1:
+            # Just [[File:filename.jpg]] — remove it
+            return ""
+        else:
+            # [[File:filename.jpg|...|...|text of interest]]
+            return f"\n\n(caption: {parts[-1]})\n\n"  # assume last part is the text of interest
+
+    # Match both File and Image tags
+    return re.sub(
+        r"\[\[(File|Image):(.*?)\]\]",
+        replace_file_tag,
+        text,
+        flags=re.DOTALL,
+    )
+
+
+def replace_nsbp_by_spaces(text: str) -> str:
+    """Replace spaces with underscores in the text."""
+    return text.replace("&nbsp;", " ").replace("{{Nbsp}}", " ")
 
 
 def extract_geospatial_coordinates(text: str) -> Optional[Tuple[float, float]]:
@@ -107,8 +130,36 @@ def extract_geospatial_coordinates(text: str) -> Optional[Tuple[float, float]]:
 
 
 def extract_categories(text: str) -> List[str]:
-    """Extract categories from Wikipedia text using regex patterns."""
-    return re.findall(r"\[\[Category:(.*?)\]\]", text)
+    """Extract categories from Wikipedia text.
+
+    Parameters
+    ----------
+    text : str
+        The Wikipedia page text to extract categories from.
+
+    Returns
+    -------
+    List[str]
+        A list of category names with spaces normalized and sorted alphabetically.
+    """
+    # Match standard category syntax, handling both [[Category:Name]] and [[Category:Name|*]] formats
+    # The pipe character can be used for sorting in Wikipedia but we don't need that part
+    categories = re.findall(
+        r"\[\[Category:([^|\]]+)(?:\|[^\]]+)?\]\]", text, re.IGNORECASE
+    )
+
+    # Clean up category names
+    cleaned_categories = []
+    for category in categories:
+        # Remove HTML comments
+        category = re.sub(r"<!--.*?-->", "", category)
+        # Normalize whitespace
+        category = re.sub(r"\s+", " ", category.strip())
+        if category:
+            cleaned_categories.append(category)
+
+    # Return unique categories sorted alphabetically
+    return sorted(set(cleaned_categories))
 
 
 def extract_infobox_category(text: str) -> Optional[str]:
@@ -215,37 +266,6 @@ def parse_infobox(page_text: str) -> dict:
     return result
 
 
-_months = (
-    "January|February|March|April|May|June|July|August|September|October|November|December|"
-    "Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec"
-)
-
-_date_patterns = [
-    # Define month names once
-    # More readable date patterns
-    r"\d{1,2}[-/]\d{1,2}[-/]\d{2,4}",  # DD/MM/YYYY or MM/DD/YYYY
-    r"\d{4}[-/]\d{1,2}[-/]\d{1,2}",  # YYYY/MM/DD
-    rf"\b\d{{1,2}}\s+(?:{_months})[,\s]+\d{{2,4}}\b",  # DD Month YYYY
-    rf"\b(?:{_months})\s+\d{{1,2}}(?:st|nd|rd|th)?[,\s]+\d{{2,4}}\b",  # Month DD YYYY
-    r"\b\d{4}\b",  # Just year
-]
-
-# Combine patterns and compile once
-_date_pattern_re = re.compile("|".join(_date_patterns), re.IGNORECASE)
-
-
-def extract_dates(text: str) -> List[str]:
-    """Extract dates from Wikipedia text using regex patterns."""
-    return _date_pattern_re.findall(text)
-
-
-def has_date(text: str) -> bool:
-    """
-    Return true if the text contains any dates detected by regex patterns.
-    """
-    return bool(_date_pattern_re.search(text))
-
-
 @dataclass
 class Section:
     level: int
@@ -270,10 +290,13 @@ class Section:
             return self.title
 
     def with_cleaned_text(self):
+        text = remove_comments_and_citations(self.text)
+        text = replace_nsbp_by_spaces(text)
+        text = replace_file_links_with_captions(text)
         return Section(
             level=self.level,
             title=self.title,
-            text=remove_comments_and_citations(self.text),
+            text=text,
         )
 
     @classmethod

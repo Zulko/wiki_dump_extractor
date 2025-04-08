@@ -2,41 +2,49 @@ from typing import List, Dict
 from pydantic import BaseModel
 from pydantic_ai import Agent
 from pydantic_ai.settings import ModelSettings
+from wiki_dump_extractor import page_utils
+import mwparserfromhell
 
-event_prompt = """
+events_prompt = """
 You are an expert event extraction assistant.
-Your task is to extract ALL events from the provided Wikipedia text into
-structured JSON format, strictly adhering to the following instructions:
 
-Each event JSON object must contain these fields:
+Your task is to carefully analyze the provided Wikipedia text and extract ALL distinct events into a structured JSON format, strictly following the guidelines below:
 
-who: List every person or group involved. Separate multiple names with "|".
+Each event must be represented as a JSON object containing these specific fields:
 
-what: Provide a concise summary of the event. Avoid repeating date or location.
+who: List every individual or group involved, separated by "|". Include all mentioned participants.
 
-where: Give detailed location information (e.g., place, building), as specific as possible.
+what: Concisely summarize what occurred in the event. Avoid including dates or location here.
 
-city: Provide the city name, if known.
+where: Clearly specify the exact location or venue, providing as much detail as possible (e.g., landmark, building name, region).
 
-when: Provide the exact date in YYYY/MM/DD format, or a date range (YYYY/MM/DD - YYYY/MM/DD). Always search thoroughly for an exact day.
+city: Include the name of the city if available.
 
-If multiple pieces of information about the same event appear scattered throughout the text, combine them into a single, complete event entry. If some information is missing, make a reasoned inference based on the available context.
+when: Provide the exact event date in the format YYYY/MM/DD (use "YYYY BC" for years before Christ). If the exact date isn't explicitly stated, provide a date range in the format YYYY/MM/DD - YYYY/MM/DD. If the day is unknown, give the month as YYYY/MM. If neither day nor month is available, only use the year (YYYY).
 
-Example of correctly structured event:
+Additional critical instructions:
 
-{
-"who": "Benedetto Marcello|Rosanna Scalfi",
-"what": "Married in a secret ceremony",
-"where": "Saint Mark's Basilica",
-"city": "Venice",
-"when": "1728/05/20"
-}
+If information about a single event is scattered across the text, integrate all details into one comprehensive event entry.
 
-Important:
+Ensure no events are omitted; review the text carefully.
 
-Return events as a list, even if there is only one event.
+Always provide at least one event; do not return an empty list.
 
-Do not return an empty list; the response must always contain at least one event.
+Return the result as a JSON list, even if only a single event is identified.
+
+Example of a correctly structured event:
+
+[
+  {
+    "who": "Benedetto Marcello|Rosanna Scalfi",
+    "what": "Married in a secret ceremony",
+    "where": "Saint Mark's Basilica",
+    "city": "Venice",
+    "when": "1728/05/20"
+  }
+]
+
+Your response must strictly adhere to these instructions and formatting.
 """
 
 
@@ -59,7 +67,10 @@ class EventsResponse(BaseModel):
 
 
 async def get_all_events(
-    text: str, model="google-gla:gemini-1.5-flash-8b"
+    text: str,
+    model="google-gla:gemini-2.0-flash-lite",
+    preprocess_text=True,
+    **model_settings,
 ) -> List[Dict]:
     """Get all events in a text using an LLM.
 
@@ -76,11 +87,14 @@ async def get_all_events(
         cleaned_text = str(mwparserfromhell.parse(cleaned_text).strip_code())
         events = get_all_events(cleaned_text)
     """
+    if preprocess_text:
+        text = page_utils.remove_comments_and_citations(text)
+        text = str(mwparserfromhell.parse(text).strip_code())
     agent = Agent(
         model=model,
         system_prompt=events_prompt,
         result_type=EventsResponse,
-        model_settings=ModelSettings(temperature=0.1),
+        model_settings=ModelSettings(**model_settings),
     )
     return await agent.run(text)
 

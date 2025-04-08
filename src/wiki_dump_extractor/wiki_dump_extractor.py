@@ -176,7 +176,12 @@ class ExtractorBase(ABC):
             yield batch
 
     async def process_pages_async(
-        self, process_fn, num_workers=5, page_limit=None, page_filter=None
+        self,
+        process_fn,
+        num_workers=5,
+        page_limit=None,
+        page_filter=None,
+        ordered=False,
     ) -> AsyncGenerator[Tuple[Page, Any], None]:
         async def wrapper_fn(item):
             return item, await process_fn(item)
@@ -184,13 +189,13 @@ class ExtractorBase(ABC):
         page_iterator = self.iter_pages(page_limit=page_limit, page_filter=page_filter)
         async_iterator = aiostream.stream.iterate(page_iterator)
         async for result in aiostream.stream.map(
-            async_iterator, wrapper_fn, task_limit=num_workers
+            async_iterator, wrapper_fn, task_limit=num_workers, ordered=ordered
         ):
             yield result
 
     def process_page_batches_in_parallel(
         self,
-        action: Callable[[List[Page], int], Any],
+        process_fn: Callable[[List[Page], int], Any],
         num_workers: int,
         batch_size: int,
         page_limit: Optional[int] = None,
@@ -223,10 +228,12 @@ class ExtractorBase(ABC):
         batches_and_indices = zip(batches, itertools.count())
         with multiprocessing.Pool(num_workers) as pool:
             if ordered_results:
-                for batch_result in pool.imap(action, batches_and_indices):
+                for batch_result in pool.imap(process_fn, batches_and_indices):
                     yield batch_result
             else:
-                for batch_result in pool.imap_unordered(action, batches_and_indices):
+                for batch_result in pool.imap_unordered(
+                    process_fn, batches_and_indices
+                ):
                     yield batch_result
 
     def extract_pages_to_avro(

@@ -52,3 +52,14 @@ def test_extract_geospatial_coordinates_malformed():
 
     coordinates = page_utils.extract_geospatial_coordinates(wiki_text)
     assert coordinates is None  # Assuming the function returns None for invalid data
+
+
+@pytest.mark.parametrize(
+    "text, expected",
+    [
+        ("[[File:image.jpg|caption]]", "\n\n(caption: caption)\n\n"),
+        ("[[File:image.jpg]]", ""),
+    ],
+)
+def test_replace_file_links_with_captions(text, expected):
+    assert page_utils.replace_file_links_with_captions(text) == expected
