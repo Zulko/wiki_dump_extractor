@@ -266,11 +266,11 @@ def parse_infobox(page_text: str) -> dict:
 
     infobox_start = page_text.find("{{Infobox")
     if infobox_start == -1:
-        return {}
+        return {}, ""
 
     infobox_end = _find_matching_braces(page_text, infobox_start)
     if infobox_end == -1:
-        return {}
+        return {}, ""
 
     original_infobox_text = page_text[infobox_start:infobox_end]
     infobox_text = original_infobox_text.replace("{{Infobox", "")
@@ -299,6 +299,17 @@ def parse_infobox(page_text: str) -> dict:
         result[key] = value
 
     return result, original_infobox_text
+
+
+def extract_links(wiki_text):
+    """Extract all the links of the form [[true page|text]] in a dict of the form
+    {text: true page}"""
+    pattern = r"\[\[([^|]+?)(?:\|(.*?))?\]\]"
+    return {
+        match.group(2).strip(): match.group(1).strip()
+        for match in re.finditer(pattern, wiki_text)
+        if match.group(2)
+    }
 
 
 def extract_filenames(wiki_text):
