@@ -189,7 +189,9 @@ class DateFormat(ABC):
                     results.append(detected_date)
 
             except ValueError as err:
-                errors.append(f"Error parsing date: {match.group(0)} - {err}")
+                errors.append(
+                    f"Error parsing {cls.name} date: {match.group(0)} - {err}"
+                )
         return results, errors
 
 
@@ -198,7 +200,7 @@ class SlashDMYMDYFormat(DateFormat):
 
     name = "SLASH_DMY_MDY"
     pattern = re.compile(
-        r"\b(\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s*BC)?\b(?![-/])", re.IGNORECASE
+        r"\b(\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s+(BC))?\b", re.IGNORECASE
     )
 
     @classmethod
@@ -363,10 +365,10 @@ class WrittenDateFormat(DateFormat):
 
 
 class WikiDateFormat(DateFormat):
-    """Format for {{Birth date|YYYY|MM|DD}}."""
+    """Format for {{Birth date|YYYY|MM|DD|...}}."""
 
     name = "WIKI_BIRTH_DATE"
-    pattern = re.compile(r"{{.*\|(\d{4})\|(\d{1,2})\|(\d{1,2})", re.IGNORECASE)
+    pattern = re.compile(r"{{[^|]*\|(\d{1,4})\|(\d{1,2})\|(\d{1,2}).*}}", re.IGNORECASE)
 
     @classmethod
     def match_to_date(cls, match: re.Match) -> datetime:

@@ -14,14 +14,48 @@ def get_short_description(text: str) -> str:
     return ""
 
 
+def remove_appendix_sections(text: str) -> str:
+    """Remove sections like References, Notes, etc. from the text."""
+    sections_to_remove = [
+        "References",
+        "Notes",
+        "Bibliography",
+        "Further reading",
+        "External links",
+        "See also",
+    ]
+    for section in sections_to_remove:
+        text = text.split(f"= {section} =")[0]
+        text = text.split(f"={section}=")[0]
+    return text
+
+    return re.sub(r"== References ==.*?== Notes ==.*?", "", text, flags=re.DOTALL)
+
+
 def remove_comments_and_citations(text: str) -> str:
     """Return the text without comments and citations."""
-    text = re.sub(r"<!--.*?-->", " ", text)
-    text = re.sub(r"{{Cite.*?}}", " ", text)
-    text = re.sub(r"{{citation.*?}}", " ", text)
-    text = re.sub(r"{{sfn.*?}}", " ", text)
-    text = re.sub(r"<ref>.*?</ref>", " ", text)
-    text = re.sub(r"<ref.*?/>", " ", text)
+    patterns = [
+        r"<!--.*?-->",
+        r"{{Cite.*?}}",
+        r"{{cite.*?}}",
+        r"{{citation.*?}}",
+        r"{{sfn.*?}}",
+        r"<ref>.*?</ref>",
+        r"<ref.*?>.*?</ref>",
+        r"<ref.*?/>",
+    ]
+    for pattern in patterns:
+        text = re.sub(pattern, " ", text)
+
+    return text
+
+
+def replace_titles_with_section_headers(text):
+    text = re.sub(
+        r"^===\s*(.*?)\s*===", r"\nSubsection: \1\n\n", text, flags=re.MULTILINE
+    )
+    text = re.sub(r"^==\s*(.*?)\s*==", r"\nSection: \1\n\n", text, flags=re.MULTILINE)
+    text = re.sub(r"^=\s*(.*?)\s*=", r"\nChapter: \1\n\n", text, flags=re.MULTILINE)
     return text
 
 
@@ -35,7 +69,7 @@ def replace_file_links_with_captions(text):
             return ""
         else:
             # [[File:filename.jpg|...|...|text of interest]]
-            return f"\n\n(caption: {parts[-1]})\n\n"  # assume last part is the text of interest
+            return f"\n\n(image caption: {parts[-1]})\n\n"  # assume last part is the text of interest
 
     # Match both File and Image tags
     return re.sub(
@@ -48,7 +82,7 @@ def replace_file_links_with_captions(text):
 
 def replace_nsbp_by_spaces(text: str) -> str:
     """Replace spaces with underscores in the text."""
-    return text.replace("&nbsp;", " ").replace("{{Nbsp}}", " ")
+    return text.replace("&nbsp;", " ").replace("{{Nbsp}}", " ").replace("<br />", " ; ")
 
 
 def extract_geospatial_coordinates(text: str) -> Optional[Tuple[float, float]]:
@@ -238,7 +272,8 @@ def parse_infobox(page_text: str) -> dict:
     if infobox_end == -1:
         return {}
 
-    infobox_text = page_text[infobox_start + 9 : infobox_end]
+    original_infobox_text = page_text[infobox_start:infobox_end]
+    infobox_text = original_infobox_text.replace("{{Infobox", "")
 
     # Extract the category (first line after "{{Infobox")
     category_match = re.match(r"([^\|\n]+)", infobox_text)
@@ -263,7 +298,25 @@ def parse_infobox(page_text: str) -> dict:
         value = re.sub(r"<!--.*?-->", "", value)
         result[key] = value
 
-    return result
+    return result, original_infobox_text
+
+
+def extract_filenames(wiki_text):
+    """
+    Extract the filename from a MediaWiki file link using regular expressions.
+
+    Args:
+        wiki_file_text (str): The MediaWiki file link text
+
+    Yields:
+        str: Each extracted filename found in the text
+    """
+    # Pattern to match filename in MediaWiki file syntax
+    # [[File:filename.ext|...]] or [[Image:filename.ext|...]]
+    pattern = r"\[\[(File|Image):([^|]+?)(?:\|.*?)?\]\]"
+
+    for match in re.finditer(pattern, wiki_text):
+        yield match.group(2).strip()
 
 
 @dataclass
