@@ -200,14 +200,14 @@ class SlashDMYMDYFormat(DateFormat):
 
     name = "SLASH_DMY_MDY"
     pattern = re.compile(
-        r"\b(\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s+(BC))?\b", re.IGNORECASE
+        r"\B[^|](\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s+(BC))?\b", re.IGNORECASE
     )
 
     @classmethod
     def match_to_date(cls, match: re.Match) -> Date:
         day, month, year, bc = match.groups()
         day, month, year = int(day), int(month), int(year)
-        if "BC" in bc.upper():
+        if bc:
             year = -year
 
         # Try MM/DD/YYYY first (American format)
