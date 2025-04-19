@@ -33,8 +33,6 @@ llm = [
     "pydantic",
     "pydantic-ai",
 ]
-
-[project.optional-dependencies]
 test = [
     "pytest>=7.0.0",
     "pytest-cov>=4.0.0",

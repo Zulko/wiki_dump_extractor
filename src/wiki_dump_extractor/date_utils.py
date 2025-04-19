@@ -247,6 +247,7 @@ class DayMonthYearFormat(DateFormat):
         \s+
         ({_MONTHS_PATTERN})               # Month (provided externally)
         [,\s]+
+        (?:AD\s*)?
         (\d{{1,4}})                         # Year (1-4 digits)
         (?:\s+(BC))?                      # Optional ' BC'
         \b
@@ -273,6 +274,7 @@ class MonthDayYearFormat(DateFormat):
         (\d{{1,2}})                # Day (1 or 2 digits)
         (?:st|nd|rd|th)?           # Optional ordinal suffix
         [,\s]+
+        (?:AD\s*)?
         (\d{{1,4}})                # Year (1 to 4 digits)
         (?:\s+(BC))?               # Optional ' BC'
         \b
@@ -293,7 +295,8 @@ class MonthYearFormat(DateFormat):
 
     name = "MONTH_YEAR"
     pattern = re.compile(
-        rf"\b({_MONTHS_PATTERN})\s+(\d{{2,4}})(?:\s+(BC))?\b", re.IGNORECASE
+        rf"\b({_MONTHS_PATTERN})\s*(?:AD\s*)?(\d{{2,4}})(?:\s+(BC))?\b",
+        re.IGNORECASE,
     )
 
     @classmethod
@@ -320,7 +323,8 @@ class YearFormat(DateFormat):
 
     name = "YEAR"
     pattern = re.compile(
-        r"\b(?:c\.|in|from|to) (\d{1,4})(?:\s+(BC))?[\s,\.]", re.IGNORECASE
+        r"\b(?:c\.|in|from|to)\s*(?:AD\s*)?(\d{1,4})(?:\s*(BC))?[\s,\.]",
+        re.IGNORECASE,
     )
 
     @classmethod

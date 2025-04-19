@@ -25,7 +25,7 @@ Each event must be represented as a JSON object containing these specific fields
 - who: List every individual or group involved, separated by "|". Include all mentioned participants and use their full names, which would be the name of their wikipedia page (e.g. Louis XIV, Peter the Great, etc.).
 - what: Concisely summarize what occurred in the event in one sentence. Avoid including dates or location here.
 - where: Clearly specify the exact location or venue, providing as much detail as possible (e.g., landmark, building name, region).
-- city: Include the name of the city if available.
+- city: Include the name of the city if available. If the location is not mentioned but the city can be guessed from the context, give the city name with a "?", for instance "Venice ?".
 - when: Provide the exact event date in the format YYYY/MM/DD (use "YYYY BC" for years before Christ). If the exact date isn't explicitly stated, provide a date range in the format YYYY/MM/DD - YYYY/MM/DD. If the day is unknown, give the month as YYYY/MM. If neither day nor month is available, only use the year (YYYY).
 
 Additional critical instructions:
@@ -42,7 +42,13 @@ Example of a correctly structured event:
     "where": "Saint Mark's Basilica",
     "city": "Venice",
     "when": "1728/05/20"
+  },
   }
+    "who": "Benedetto Marcello",
+    "what": "Composed the opera 'L'Ormindo'.",
+    "where": "",
+    "city": "Venice ?",
+    "when": "1730"
 ]
 
 Your response must strictly adhere to these instructions and formatting.
@@ -90,9 +96,9 @@ class PageEventExtractionRequest:
         }
 
     @classmethod
-    def from_page(cls, page):
+    def from_page(cls, page, model_settings: Dict[str, Any] = None):
         text = format_page_text_for_llm(page.text)
-        return cls(page_title=page.title, text=text)
+        return cls(page_title=page.title, text=text, model_settings=model_settings)
 
     def _process_response(self, response):
         usage = response.usage_metadata
