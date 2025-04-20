@@ -33,6 +33,8 @@ def test_parse_string_to_date_range(date, expected):
         ("from 934,", "0934/01/01"),
         ("to 58,", "0058/01/01"),
         ("in 55 BC,", "-055/01/01"),
+        ("in 55 BCE,", "-055/01/01"),
+        ("16 November 8 BCE", "-008/11/16"),
         ("in AD 55.", "0055/01/01"),
         ("in AD 7.", "0007/01/01"),
         ("6 November AD 15", "0015/11/06"),

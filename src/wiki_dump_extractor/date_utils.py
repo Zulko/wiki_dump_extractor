@@ -200,7 +200,7 @@ class SlashDMYMDYFormat(DateFormat):
 
     name = "SLASH_DMY_MDY"
     pattern = re.compile(
-        r"\B[^|](\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s+(BC))?\b", re.IGNORECASE
+        r"\B[^|](\d{1,2})[-/](\d{1,2})[-/](\d{1,4})(?:\s+(BC|BCE))?\b", re.IGNORECASE
     )
 
     @classmethod
@@ -226,7 +226,7 @@ class DashYMDFormat(DateFormat):
 
     name = "DASH_YMD"
     pattern = re.compile(
-        r"\b(\d{1,4})[-/](\d{1,2})[-/](\d{1,2})(?:\s+(BC))?\b", re.IGNORECASE
+        r"\b(\d{1,4})[-/](\d{1,2})[-/](\d{1,2})(?:\s+(BC|BCE))?\b", re.IGNORECASE
     )
 
     @classmethod
@@ -249,7 +249,7 @@ class DayMonthYearFormat(DateFormat):
         [,\s]+
         (?:AD\s*)?
         (\d{{1,4}})                         # Year (1-4 digits)
-        (?:\s+(BC))?                      # Optional ' BC'
+        (?:\s+(BC|BCE))?                    # Optional ' BC'
         \b
     """
     pattern = re.compile(re_dmy, re.VERBOSE | re.IGNORECASE)
@@ -276,7 +276,7 @@ class MonthDayYearFormat(DateFormat):
         [,\s]+
         (?:AD\s*)?
         (\d{{1,4}})                # Year (1 to 4 digits)
-        (?:\s+(BC))?               # Optional ' BC'
+        (?:\s+(BC|BCE))?           # Optional ' BC'
         \b
     """
     pattern = re.compile(re_mdy, re.VERBOSE | re.IGNORECASE)
@@ -295,7 +295,7 @@ class MonthYearFormat(DateFormat):
 
     name = "MONTH_YEAR"
     pattern = re.compile(
-        rf"\b({_MONTHS_PATTERN})\s*(?:AD\s*)?(\d{{2,4}})(?:\s+(BC))?\b",
+        rf"\b({_MONTHS_PATTERN})\s*(?:AD\s*)?(\d{{2,4}})(?:\s+(BC|BCE))?\b",
         re.IGNORECASE,
     )
 
@@ -323,7 +323,7 @@ class YearFormat(DateFormat):
 
     name = "YEAR"
     pattern = re.compile(
-        r"\b(?:c\.|in|from|to)\s*(?:AD\s*)?(\d{1,4})(?:\s*(BC))?[\s,\.]",
+        r"\b(?:c\.|in|from|to)\s*(?:AD\s*)?(\d{1,4})(?:\s*(BC|BCE))?[\s,\.,\)]",
         re.IGNORECASE,
     )
 
@@ -341,7 +341,7 @@ class WrittenDateFormat(DateFormat):
 
     name = "WRITTEN_DATE"
     pattern = re.compile(
-        rf"\b({_MONTHS_PATTERN})\s+the\s+(?:(\d{{1,2}})(?:st|nd|rd|th)?|([a-z]+))[,\s]+(\d{{1,4}})+(?:\s+(BC)|())\b",
+        rf"\b({_MONTHS_PATTERN})\s+the\s+(?:(\d{{1,2}})(?:st|nd|rd|th)?|([a-z]+))[,\s]+(\d{{1,4}})+(?:\s+(BC|BCE))?\b",
         re.IGNORECASE,
     )
 
