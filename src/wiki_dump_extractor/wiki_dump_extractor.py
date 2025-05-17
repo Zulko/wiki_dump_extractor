@@ -16,13 +16,17 @@ import multiprocessing
 import itertools
 from pathlib import Path
 from copy import deepcopy
+import json
 import bz2
 import fastavro
+import shutil
+
 from lxml import etree
 from tqdm.auto import tqdm
-import shutil
 import plyvel
 import aiostream
+
+from .page_utils import extract_categories
 
 
 @dataclass
@@ -298,6 +302,49 @@ class ExtractorBase(ABC):
                 ]
                 fastavro.writer(f, schema, records, codec=codec)
 
+    def extract_disambiguation_page_titles(
+        self, output_file: Union[str, Path], page_limit: int = None
+    ):
+        """Extract disambiguation pages from the dump file.
+
+        Parameters
+        ----------
+        output_file : str
+            Path where to save the output Avro file.
+        page_limit : int, optional
+            Maximum number of pages to extract, by default None
+        """
+
+        categories = [
+            "Place name disambiguation pages",
+            "Disambiguation pages",
+            "Given names",
+            "Human name disambiguation pages",
+            "School disambiguation pages",
+        ]
+
+        pages_in_category = {c: [] for c in categories}
+
+        for page in tqdm(self.iter_pages(page_limit=page_limit)):
+            text_lowercase = page.text.lower()
+            for pattern, category in [
+                ("{{given name", "Given names"),
+                ("{{hndis", "Human name disambiguation pages"),
+                ("{{dab", "Disambiguation pages"),
+                ("{{disambiguation", "Disambiguation pages"),
+                ("{{geodis", "Place name disambiguation pages"),
+                ("{{schooldis", "School disambiguation pages"),
+            ]:
+                if pattern in text_lowercase:
+                    pages_in_category[category].append(page.title)
+            for category in extract_categories(page.text):
+                if category in pages_in_category:
+                    pages_in_category[category].append(page.title)
+        if output_file is not None:
+            with open(output_file, "w") as f:
+                json.dump(pages_in_category, f)
+        return pages_in_category
+
 
 class WikiXmlDumpExtractor(ExtractorBase):
     """A class for extracting pages from a MediaWiki XML dump file.
@@ -439,17 +486,22 @@ class WikiAvroDumpExtractor(ExtractorBase):
     @classmethod
     def _get_page_using_index(
         cls, title: str, db: plyvel.DB, avro_reader: fastavro.reader
-    ) -> Page:
+    ) -> Optional[Page]:
         """Get a page by its title using the index.
 
         Parameters
         ----------
         title : str
             The title of the page to get.
+
+        Returns
+        -------
+        Page | None
+            The page if it is found in the index, otherwise None.
         """
         entry = db.get(title.encode("utf-8"))
         if entry is None:
-            raise ValueError(f"Page with title {title} not found in index")
+            return None
         idx = int(entry)
         avro_reader.fo.seek(idx)
         page = next(avro_reader)
@@ -457,6 +509,49 @@ class WikiAvroDumpExtractor(ExtractorBase):
             page = next(avro_reader)
         assert page["title"] == title
         return Page(**page)
+
+    def get_page_batch_by_title(
+        self,
+        titles: List[str],
+        redirects_db: plyvel.DB = None,
+        ignore_titles_not_found: bool = False,
+    ) -> List[Page]:
+        """Get a batch of pages by their titles.
+
+        Parameters
+        ----------
+        titles : List[str]
+            The titles of the pages to get.
+        """
+        if redirects_db is not None:
+            redirected_titles = []
+            for title in titles:
+                redirect = redirects_db.get(title.encode("utf-8"))
+                if redirect is not None:
+                    redirected_titles.append(redirect.decode("utf-8"))
+                else:
+                    redirected_titles.append(title)
+            titles = redirected_titles
+        with plyvel.DB(str(self.index_dir)) as db:
+            with open(self.file_path, "rb") as f:
+                reader = fastavro.reader(f)
+                next(reader)
+                pages = [
+                    self._get_page_using_index(title, db, reader) for title in titles
+                ]
+                if not any(p is None for p in pages):
+                    return pages
+
+                if ignore_titles_not_found:
+                    return [p for p in pages if p is not None]
+                else:
+                    missing_titles = [
+                        title for title, p in zip(titles, pages) if p is None
+                    ]
+                    raise ValueError(
+                        f"{len(missing_titles)} pages not found in index:"
+                        f"first ones are {missing_titles[:10]}"
+                    )
 
     def get_page_by_title(self, title: str) -> Page:
         """Get a page by its title.
@@ -466,11 +561,7 @@ class WikiAvroDumpExtractor(ExtractorBase):
         title : str
             The title of the page to get.
         """
-        with plyvel.DB(str(self.index_dir)) as db:
-            with open(self.file_path, "rb") as f:
-                reader = fastavro.reader(f)
-                next(reader)
-                return self._get_page_using_index(title, db, reader)
+        return self.get_page_batch_by_title([title])[0]
 
     def iter_pages_by_title(self, titles: List[str]) -> Generator[Page, None, None]:
         """Get a page by its title.
@@ -486,3 +577,42 @@ class WikiAvroDumpExtractor(ExtractorBase):
                 next(reader)
                 for title in titles:
                     yield self._get_page_using_index(title, db, reader)
+
+    def extract_pages_titles_to_new_dump(
+        self,
+        page_titles: List[str],
+        output_avro_file: Union[str, Path],
+        replace_file: bool = True,
+        batch_size: int = 1000,
+        redirects_db: plyvel.DB = None,
+        ignore_titles_not_found: bool = False,
+    ):
+        """Extract a list of pages by their titles to a new Avro file.
+
+        Parameters
+        ----------
+        page_titles : List[str]
+            The titles of the pages to extract.
+        output_avro_file : str
+            Path where to save the output Avro file.
+        """
+
+        output_file = Path(output_avro_file)
+        if output_file.exists() and replace_file:
+            output_file.unlink()
+
+        batches = (
+            page_titles[i : i + batch_size]
+            for i in range(0, len(page_titles), batch_size)
+        )
+
+        with output_file.open("a+b") as f:
+            for batch in tqdm(batches):
+                pages = self.get_page_batch_by_title(
+                    batch,
+                    redirects_db=redirects_db,
+                    ignore_titles_not_found=ignore_titles_not_found,
+                )
+                if len(pages) > 0:
+                    schema = pages[0].get_avro_schema(fields=["title", "text"])
+                    fastavro.writer(f, schema, [page.to_dict() for page in pages])

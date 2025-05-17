@@ -232,7 +232,7 @@ def _find_matching_braces(text, start_pos):
     return -1
 
 
-def parse_infobox(page_text: str) -> dict:
+def parse_infobox(page_text: str) -> Tuple[dict, str]:
     """Parse the infobox from a Wikipedia page text.
 
     Example of infobox. This recognizes the "{{Infobox" pattern. then parses
@@ -305,11 +305,24 @@ def extract_links(wiki_text):
     """Extract all the links of the form [[true page|text]] in a dict of the form
     {text: true page}"""
     pattern = r"\[\[([^|]+?)(?:\|(.*?))?\]\]"
-    return {
-        match.group(2).strip(): match.group(1).strip()
-        for match in re.finditer(pattern, wiki_text)
-        if match.group(2)
-    }
+    result = {}
+    for match in re.finditer(pattern, wiki_text):
+        if not match.group(2):
+            text = match.group(1).strip()
+            page = text.replace("_", " ")
+        else:
+            text = match.group(2).strip()
+            page = match.group(1).strip().replace("_", " ")
+        if text:
+            already_assigned = result.get(text)
+            if already_assigned is None:
+                result[text] = match.group(1).strip()
+            else:
+                if isinstance(already_assigned, str):
+                    result[text] = [already_assigned]
+                if page not in result[text]:
+                    result[text].append(page)
+    return result
 
 
 def extract_filenames(wiki_text):

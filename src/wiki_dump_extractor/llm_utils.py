@@ -16,43 +16,8 @@ import mwparserfromhell
 from google.cloud import storage
 from google.cloud import aiplatform
 
-
-events_prompt = """You are an expert historical event extraction assistant.
-
-Your task is to carefully analyze the provided Wikipedia text and extract ALL distinct events for which there is a date and place mentioned, strictly following the guidelines below:
-
-Each event must be represented as a JSON object containing these specific fields:
-- who: List every individual or group involved, separated by "|". Include all mentioned participants and use their full names, which would be the name of their wikipedia page (e.g. Louis XIV, Peter the Great, etc.).
-- what: Concisely summarize what occurred in the event in one sentence. Avoid including dates or location here.
-- where: Clearly specify the exact location or venue, providing as much detail as possible (e.g., landmark, building name, region).
-- city: Include the name of the city if available. If the location is not mentioned but the city can be guessed from the context, give the city name with a "?", for instance "Venice ?".
-- when: Provide the exact event date in the format YYYY/MM/DD (use "YYYY BC" for years before Christ). If the exact date isn't explicitly stated, provide a date range in the format YYYY/MM/DD - YYYY/MM/DD. If the day is unknown, give the month as YYYY/MM. If neither day nor month is available, only use the year (YYYY).
-
-Additional critical instructions:
-- If information about a single event is scattered across the text, integrate all details into one comprehensive event entry.
-- Ensure no events are omitted; review the text carefully and extract all life events, career events, historical events, political events, military events, cultural events, scientific events, etc. Pay special attention to dates mentioned in the text, as they often indicate important events.
-- Return the result as a JSON list, even if only a single event is identified.
-
-Example of a correctly structured event:
-
-[
-  {
-    "who": "Benedetto Marcello|Rosanna Scalfi",
-    "what": "Married in a secret ceremony.",
-    "where": "Saint Mark's Basilica",
-    "city": "Venice",
-    "when": "1728/05/20"
-  },
-  }
-    "who": "Benedetto Marcello",
-    "what": "Composed the opera 'L'Ormindo'.",
-    "where": "",
-    "city": "Venice ?",
-    "when": "1730"
-]
-
-Your response must strictly adhere to these instructions and formatting.
-"""
+with open(Path(__file__).parent / "event_extraction_prompt.md", "r") as f:
+    events_prompt = f.read()
 
 
 class Event(BaseModel):
@@ -172,7 +137,7 @@ def process_batch_request(
     # Upload JSONL to Google Cloud Storage
 
     # NORMALIZE MODEL NAME
-
+    jsonl_path = Path(jsonl_path)
     model_mapping = {
         "gemini-2.0-flash": "gemini-2.0-flash-001",
         "gemini-2.0-flash-lite": "gemini-2.0-flash-lite-001",
@@ -203,6 +168,7 @@ def process_batch_request(
         gcs_destination_prefix=gcs_output_uri,
         instances_format="jsonl",
         predictions_format="jsonl",
+        sync=True,
     )
     print(f"Batch job {batch_job.resource_name} started. Waiting for completion...")
     batch_job.wait()
@@ -223,19 +189,36 @@ def process_batch_request(
         predictions_path = f"{batch_name}/batch_output/{last_folder}/predictions.jsonl"
         blob = bucket.blob(predictions_path)
         jsonl_content = blob.download_as_text()
+
+        # Download to a local file
+        local_predictions_path = f"{jsonl_path.parent}/{batch_name}_predictions.jsonl"
+        with open(local_predictions_path, "w") as f:
+            f.write(jsonl_content)
     else:
         print("No batch output folders found")
 
     # PARSE THE RESULTS
-
-    responses = [json.loads(line) for line in jsonl_content.split("\n") if line.strip()]
     results_by_page = {}
-    for page_results in responses:
-        page_title = page_results["page_title"]
-        candidates = page_results["response"]["candidates"]
-        json_response = candidates[0]["content"]["parts"][0]["text"]
-        events = json.loads(json_response)["events"]
-        results_by_page[page_title] = events
+    failed = {}
+    errored = {}
+    total_usage = {}
+    with open(local_predictions_path, "r") as f:
+        for line in f:
+            page_results = json.loads(line)
+            page_title = page_results["page_title"]
+            try:
+                usage = page_results["response"]["usageMetadata"]
+                for key in ["promptTokenCount", "candidatesTokenCount"]:
+                    total_usage[key] = total_usage.get(key, 0) + usage.get(key, 0)
+                    candidate = page_results["response"]["candidates"][0]
+                    if candidate["finishReason"] != "STOP":
+                        failed[page_title] = page_results
+
+                    json_response = candidate["content"]["parts"][0]["text"]
+                    events = json.loads(json_response)["events"]
+                    results_by_page[page_title] = events
+            except Exception as e:
+                errored[page_title] = str(e)
 
     # DELETE THE BATCH OUTPUT FOLDER
     blobs_to_delete = list(bucket.list_blobs(prefix=f"{batch_name}/"))
@@ -243,7 +226,7 @@ def process_batch_request(
     for blob in blobs_to_delete:
         blob.delete()
 
-    return results_by_page
+    return results_by_page, failed, errored, total_usage
 
 
 async def process_batch_request_async(
@@ -327,6 +310,7 @@ def clean_text_for_llm(text: str) -> str:
 
 
 def format_page_text_for_llm(text: str, include_infobox: bool = True) -> str:
+    """Format the page by (1) parsing the infox and (2) cleaning the main body"""
     infobox, infobox_text = page_utils.parse_infobox(text)
     if infobox:
         text = text.replace(infobox_text, "")
@@ -347,7 +331,13 @@ def format_page_text_for_llm(text: str, include_infobox: bool = True) -> str:
         f"- {key}: {value}" for key, value in cleaned_fields if value.strip() != ""
     ]
 
-    return "Infos from the infobox:\n" + "\n".join(str_fields) + "\n\n" + formatted_text
+    return (
+        "Infos from the infobox:\n"
+        + "\n".join(str_fields)
+        + "\n\n"
+        + "Wikipedia article text:\n"
+        + formatted_text
+    )
 
 
 __all__ = ["get_all_events", "PageEventExtractionRequest"]

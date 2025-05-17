@@ -1,24 +1,28 @@
 import re
 from datetime import datetime
-from typing import List, Dict, ClassVar, Pattern
+from typing import List, Dict, ClassVar, Pattern, Optional
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, asdict
 
 
-@dataclass
+@dataclass(slots=True)
 class Date:
     year: int
-    month: int
-    day: int
+    month: Optional[int] = None
+    day: Optional[int] = None
     is_approximate: bool = False
 
     def __post_init__(self):
-        """Validate the date components after initialization."""
-        # Validate year (no specific limits, can be negative for BC dates)
+        self.validate()
 
-        # Validate month (1-12)
+    def validate(self):
+        if self.month is None:
+            return True
         if not 1 <= self.month <= 12:
             raise ValueError(f"Month must be between 1 and 12, got {self.month}")
+
+        if self.day is None:
+            return True
 
         # Validate day based on month and year
         max_days = 31  # Default for most months
@@ -38,9 +42,14 @@ class Date:
             )
 
     def to_string(self) -> str:
-        result = f"{self.year:04d}/{self.month:02d}/{self.day:02d}"
-        if self.is_approximate:
-            result = f"{result} (~)"
+        if self.year < 0:
+            result = f"{-self.year:04d} BC"
+        else:
+            result = f"{self.year:04d}"
+        if self.month is not None:
+            result += f"/{self.month:02d}"
+        if self.day is not None:
+            result += f"/{self.day:02d}"
         return result
 
     def to_dict(self) -> Dict:
@@ -116,7 +125,7 @@ _MONTHS_PATTERN = (
 )
 
 
-@dataclass
+@dataclass(slots=True)
 class DetectedDate:
     date: Date
     format: str
@@ -182,9 +191,7 @@ class DateFormat(ABC):
                 date = cls.match_to_date(match)
                 if date is not None:
                     detected_date = DetectedDate(
-                        date_str=match.group(0),
-                        format=cls.name,
-                        date=date,
+                        date_str=match.group(0), format=cls.name, date=date
                     )
                     results.append(detected_date)
 
@@ -313,9 +320,7 @@ class MonthYearFormat(DateFormat):
         month = cls.convert_month_to_number(month_str)
         if bc:
             year = -int(year)
-        return Date(
-            int(year), month, 1, is_approximate=True
-        )  # Default to 1st day of month and mark as approximate
+        return Date(year=int(year), month=month, day=None)
 
 
 class YearFormat(DateFormat):
@@ -333,7 +338,7 @@ class YearFormat(DateFormat):
         year = int(year)
         if bc:
             year = -year
-        return Date(year, 1, 1)
+        return Date(year=year, month=None, day=None)
 
 
 class WrittenDateFormat(DateFormat):
@@ -501,7 +506,7 @@ class DateRange:
                         start=Date(year, month, 1, is_approximate=True),
                         end=Date(year, month, last_day, is_approximate=True),
                     )
-            case _ if match := re.match(r"^(\d{1,4})/(\d{1,2})/(\d{1,2})$", date):
+            case _ if match := re.match(r"^(-?\d{1,4})/(\d{1,2})/(\d{1,2})$", date):
                 # Full date (e.g., "1810/03/05")
                 year, month, day = map(int, match.groups())
                 return DateRange(
