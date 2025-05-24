@@ -496,5 +496,25 @@ class Section:
                 if result is not None:
                     return result
 
+    def all_subsections_text_dict(self, text_dict: Optional[dict] = None) -> dict:
+        """
+        Recursively collect text from a section and all its subsections.
+
+        Args:
+            text_dict: Dictionary to store section titles and texts
+
+        Returns:
+            Dictionary mapping section titles to their text content
+        """
+        if text_dict is None:
+            text_dict = {}
+
+        text_dict[self.title] = self.text
+
+        for sub_section in self.children:
+            sub_section.all_subsections_text_dict(text_dict)
+
+        return text_dict
+
     def __str__(self):
         return f"Section[{self.level}](title={self.title}, text={self.text[:20]}...)"
