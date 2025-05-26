@@ -57,7 +57,7 @@ def test_extract_geospatial_coordinates_malformed():
 @pytest.mark.parametrize(
     "text, expected",
     [
-        ("[[File:image.jpg|caption]]", "\n\n(caption: caption)\n\n"),
+        ("[[File:image.jpg|caption]]", "\n\n(image caption: caption)\n\n"),
         ("[[File:image.jpg]]", ""),
     ],
 )

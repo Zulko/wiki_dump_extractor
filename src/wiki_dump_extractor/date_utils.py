@@ -430,7 +430,13 @@ class DateRange:
     end: Date
 
     def to_string(self) -> str:
-        return f"{self.start.to_string()} - {self.end.to_string()}"
+        start = self.start.to_string()
+        end = self.end.to_string()
+        if self.start.is_approximate:
+            start = f"~{start}"
+        if self.end.is_approximate:
+            end = f"~{end}"
+        return f"{start} - {end}"
 
     @classmethod
     def from_parsed_string(cls, date: str) -> "DateRange":

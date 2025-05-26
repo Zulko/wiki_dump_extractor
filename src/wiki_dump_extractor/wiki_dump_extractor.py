@@ -20,10 +20,10 @@ import json
 import bz2
 import fastavro
 import shutil
+import lmdb
 
 from lxml import etree
 from tqdm.auto import tqdm
-import plyvel
 import aiostream
 
 from .page_utils import extract_categories
@@ -468,7 +468,11 @@ class WikiAvroDumpExtractor(ExtractorBase):
         index_dir = Path(index_dir)
         if index_dir.exists():
             shutil.rmtree(index_dir)
-        with plyvel.DB(str(index_dir), create_if_missing=True) as db:
+        
+        # Create LMDB environment with generous map size (10GB)
+        env = lmdb.open(str(index_dir), map_size=10 * 1024 * 1024 * 1024)
+        
+        with env.begin(write=True) as txn:
             with open(self.file_path, "rb") as f:
                 reader = fastavro.reader(f)
                 previous_idx = reader.fo.tell()
@@ -477,15 +481,17 @@ class WikiAvroDumpExtractor(ExtractorBase):
                     new_idx = reader.fo.tell()
                     if new_idx != previous_idx:
                         idx_to_log = previous_idx
-                    db.put(
-                        record["title"].encode("utf-8"), str(idx_to_log).encode("utf-8")
+                    txn.put(
+                        record["title"].encode("utf-8"), 
+                        str(idx_to_log).encode("utf-8")
                     )
                     previous_idx = new_idx
+        env.close()
         self.index_dir = index_dir
 
     @classmethod
     def _get_page_using_index(
-        cls, title: str, db: plyvel.DB, avro_reader: fastavro.reader
+        cls, title: str, txn: lmdb.Transaction, avro_reader: fastavro.reader
     ) -> Optional[Page]:
         """Get a page by its title using the index.
 
@@ -493,16 +499,20 @@ class WikiAvroDumpExtractor(ExtractorBase):
         ----------
         title : str
             The title of the page to get.
+        txn : lmdb.Transaction
+            The LMDB transaction to use for reading.
+        avro_reader : fastavro.reader
+            The Avro reader to use for reading pages.
 
         Returns
         -------
         Page | None
             The page if it is found in the index, otherwise None.
         """
-        entry = db.get(title.encode("utf-8"))
+        entry = txn.get(title.encode("utf-8"))
         if entry is None:
             return None
-        idx = int(entry)
+        idx = int(entry.decode("utf-8"))
         avro_reader.fo.seek(idx)
         page = next(avro_reader)
         while page["title"] != title:
@@ -513,7 +523,7 @@ class WikiAvroDumpExtractor(ExtractorBase):
     def get_page_batch_by_title(
         self,
         titles: List[str],
-        redirects_db: plyvel.DB = None,
+        redirects_env: Optional[lmdb.Environment] = None,
         ignore_titles_not_found: bool = False,
     ) -> List[Page]:
         """Get a batch of pages by their titles.
@@ -522,36 +532,46 @@ class WikiAvroDumpExtractor(ExtractorBase):
         ----------
         titles : List[str]
             The titles of the pages to get.
+        redirects_env : lmdb.Environment, optional
+            LMDB environment containing redirects mapping.
+        ignore_titles_not_found : bool, optional
+            Whether to ignore titles that are not found in the index.
         """
-        if redirects_db is not None:
-            redirected_titles = []
-            for title in titles:
-                redirect = redirects_db.get(title.encode("utf-8"))
-                if redirect is not None:
-                    redirected_titles.append(redirect.decode("utf-8"))
-                else:
-                    redirected_titles.append(title)
-            titles = redirected_titles
-        with plyvel.DB(str(self.index_dir)) as db:
-            with open(self.file_path, "rb") as f:
-                reader = fastavro.reader(f)
-                next(reader)
-                pages = [
-                    self._get_page_using_index(title, db, reader) for title in titles
-                ]
-                if not any(p is None for p in pages):
-                    return pages
+        if redirects_env is not None:
+            with redirects_env.begin() as txn:
+                redirected_titles = []
+                for title in titles:
+                    redirect = txn.get(title.encode("utf-8"))
+                    if redirect is not None:
+                        redirected_titles.append(redirect.decode("utf-8"))
+                    else:
+                        redirected_titles.append(title)
+                titles = redirected_titles
 
-                if ignore_titles_not_found:
-                    return [p for p in pages if p is not None]
-                else:
-                    missing_titles = [
-                        title for title, p in zip(titles, pages) if p is None
+        env = lmdb.open(str(self.index_dir), readonly=True)
+        try:
+            with env.begin() as txn:
+                with open(self.file_path, "rb") as f:
+                    reader = fastavro.reader(f)
+                    next(reader)
+                    pages = [
+                        self._get_page_using_index(title, txn, reader) for title in titles
                     ]
-                    raise ValueError(
-                        f"{len(missing_titles)} pages not found in index:"
-                        f"first ones are {missing_titles[:10]}"
-                    )
+                    if not any(p is None for p in pages):
+                        return pages
+
+                    if ignore_titles_not_found:
+                        return [p for p in pages if p is not None]
+                    else:
+                        missing_titles = [
+                            title for title, p in zip(titles, pages) if p is None
+                        ]
+                        raise ValueError(
+                            f"{len(missing_titles)} pages not found in index:"
+                            f"first ones are {missing_titles[:10]}"
+                        )
+        finally:
+            env.close()
 
     def get_page_by_title(self, title: str) -> Page:
         """Get a page by its title.
@@ -571,12 +591,16 @@ class WikiAvroDumpExtractor(ExtractorBase):
         title : str
             The title of the page to get.
         """
-        with plyvel.DB(str(self.index_dir)) as db:
-            with open(self.file_path, "rb") as f:
-                reader = fastavro.reader(f)
-                next(reader)
-                for title in titles:
-                    yield self._get_page_using_index(title, db, reader)
+        env = lmdb.open(str(self.index_dir), readonly=True)
+        try:
+            with env.begin() as txn:
+                with open(self.file_path, "rb") as f:
+                    reader = fastavro.reader(f)
+                    next(reader)
+                    for title in titles:
+                        yield self._get_page_using_index(title, txn, reader)
+        finally:
+            env.close()
 
     def extract_pages_titles_to_new_dump(
         self,
@@ -584,7 +608,7 @@ class WikiAvroDumpExtractor(ExtractorBase):
         output_avro_file: Union[str, Path],
         replace_file: bool = True,
         batch_size: int = 1000,
-        redirects_db: plyvel.DB = None,
+        redirects_env: Optional[lmdb.Environment] = None,
         ignore_titles_not_found: bool = False,
     ):
         """Extract a list of pages by their titles to a new Avro file.
@@ -595,8 +619,15 @@ class WikiAvroDumpExtractor(ExtractorBase):
             The titles of the pages to extract.
         output_avro_file : str
             Path where to save the output Avro file.
+        replace_file : bool, optional
+            Whether to replace the output file if it exists.
+        batch_size : int, optional
+            Size of batches to process at once.
+        redirects_env : lmdb.Environment, optional
+            LMDB environment containing redirects mapping.
+        ignore_titles_not_found : bool, optional
+            Whether to ignore titles that are not found in the index.
         """
-
         output_file = Path(output_avro_file)
         if output_file.exists() and replace_file:
             output_file.unlink()
@@ -610,7 +641,7 @@ class WikiAvroDumpExtractor(ExtractorBase):
             for batch in tqdm(batches):
                 pages = self.get_page_batch_by_title(
                     batch,
-                    redirects_db=redirects_db,
+                    redirects_env=redirects_env,
                     ignore_titles_not_found=ignore_titles_not_found,
                 )
                 if len(pages) > 0:

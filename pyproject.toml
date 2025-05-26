@@ -7,10 +7,8 @@ name = "wiki_dump_extractor"
 version = "0.1.0"
 description = "A Python package for extracting and processing Wikipedia data"
 readme = "README.md"
-authors = [
-    {name = "Zulko"}
-]
-license = {text = "MIT"}
+authors = [{ name = "Zulko" }]
+license = { text = "MIT" }
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
@@ -23,6 +21,11 @@ dependencies = [
     "lxml>=4.9.0",
     "fastavro>=1.0.0",
     "zstandard>=0.23",
+    "pandas>=2.0.0",
+    "tqdm>=4.65.0",
+    "lmdb>=1.4.1",
+    "aiostream>=0.5.0",
+    "regex>=2023.12.0",
 ]
 
 [project.optional-dependencies]
@@ -33,16 +36,13 @@ llm = [
     "pydantic",
     "pydantic-ai",
 ]
-test = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-]
+test = ["pytest>=7.0.0", "pytest-cov>=4.0.0"]
 
 [project.urls]
 "Homepage" = "https://github.com/zulko/wiki_extractor"
 
 [tool.setuptools]
-package-dir = {"" = "src"}
+package-dir = { "" = "src" }
 packages = ["wiki_dump_extractor"]
 
 [tool.pytest.ini_options]

@@ -78,7 +78,13 @@ Or from the source in development mode:
 pip install -e .
 ```
 
-To run the tests just use `pytest` in the root directory.
+To use the LLM-specific module (that would be mostly if you are on a project like Landnotes), use
+
+```bash
+pip install wiki-dump-extractor[llm]
+```
+
+To install with tests, use `pip install -e ".[dev]"` then run the tests with `pytest` in the root directory.
 
 ### Requirements for running the LLM utils
 
