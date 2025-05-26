@@ -243,7 +243,7 @@ class ExtractorBase(ABC):
     def extract_pages_to_avro(
         self,
         output_file: Union[str, Path],
-        redirects_file: Optional[Union[str, Path]] = None,
+        redirects_db_path: Optional[Union[str, Path]] = None,
         ignored_fields: List[str] = None,
         fields: List[str] = None,
         batch_size: int = 10_000,
@@ -257,8 +257,8 @@ class ExtractorBase(ABC):
         ----------
         output_file : str
             Path where to save the output Avro file.
-        redirects_file : str | Path, optional
-            Path where to save the redirects Avro file.
+        redirects_db_path : str | Path, optional
+            Path where to save the redirects LMDB database.
         ignored_fields : List[str], optional
             Fields to ignore, by default ["text"]
         batch_size : int, optional
@@ -274,33 +274,45 @@ class ExtractorBase(ABC):
         target_path = Path(output_file)
         if target_path.exists():
             target_path.unlink()
-        if redirects_file is not None:
-            redirects_path = Path(redirects_file)
-            if redirects_path.exists():
-                redirects_path.unlink()
+
+        # Setup LMDB environment if redirects_db_path is provided
+        redirects_env = None
+        if redirects_db_path is not None:
+            redirects_db_path = Path(redirects_db_path)
+            if redirects_db_path.exists():
+                shutil.rmtree(redirects_db_path)
+            redirects_env = lmdb.open(str(redirects_db_path), map_size=10 * 1024 * 1024 * 1024)
+
         schema = Page.get_avro_schema(ignored_fields=ignored_fields, fields=fields)
-        redirects_schema = Page.get_avro_schema(
-            ignored_fields=["text", "timestamp", "revision_id"]
-        )
-        with target_path.open("a+b") as f:
-            batches = self.iter_page_batches(
-                batch_size=batch_size, page_limit=page_limit
-            )
-            total = None if page_limit is None else page_limit // batch_size
-            for batch in tqdm(batches, total=total):
-                if redirects_file is not None:
-                    redirects = [
-                        p.to_dict() for p in batch if p.redirect_title is not None
+        
+        try:
+            with target_path.open("a+b") as f:
+                batches = self.iter_page_batches(
+                    batch_size=batch_size, page_limit=page_limit
+                )
+                total = None if page_limit is None else page_limit // batch_size
+                for batch in tqdm(batches, total=total):
+                    if redirects_env is not None:
+                        # Store redirects in LMDB
+                        with redirects_env.begin(write=True) as txn:
+                            for page in batch:
+                                if page.redirect_title is not None:
+                                    txn.put(
+                                        page.title.encode("utf-8"),
+                                        page.redirect_title.encode("utf-8")
+                                    )
+                        # Filter out redirects from the main batch
+                        batch = [p for p in batch if p.redirect_title is None and p.text]
+                    
+                    records = [
+                        page.to_dict()
+                        for page in batch
+                        if page_filter is None or page_filter(page)
                     ]
-                    with redirects_path.open("a+b") as fr:
-                        fastavro.writer(fr, redirects_schema, redirects, codec=codec)
-                    batch = [p for p in batch if p.redirect_title is None and p.text]
-                records = [
-                    page.to_dict()
-                    for page in batch
-                    if page_filter is None or page_filter(page)
-                ]
-                fastavro.writer(f, schema, records, codec=codec)
+                    fastavro.writer(f, schema, records, codec=codec)
+        finally:
+            if redirects_env is not None:
+                redirects_env.close()
 
     def extract_disambiguation_page_titles(
         self, output_file: Union[str, Path], page_limit: int = None
@@ -355,7 +367,7 @@ class WikiXmlDumpExtractor(ExtractorBase):
 
     Parameters
     ----------
-    file_path : str
+    file_path : str | Path
         Path to the MediaWiki XML dump file (.xml or .xml.bz2)
 
     Examples
@@ -369,18 +381,19 @@ class WikiXmlDumpExtractor(ExtractorBase):
     ...     process_batch(batch)
     """
 
-    def __init__(self, file_path: str):
-        self.file_path = file_path
+    def __init__(self, file_path: Union[str, Path]):
+        self.file_path = Path(file_path)
         self.namespace = self._detect_namespace()
 
     def _get_xml_handle(self):
         """Return a handle to the XML file (handle both .xml and .xml.bz2)"""
-        if self.file_path.endswith(".xml"):
+        suffix = self.file_path.suffix
+        if suffix == ".xml":
             return open(self.file_path, "rb")
-        elif self.file_path.endswith(".xml.bz2"):
+        elif suffix == ".bz2" and self.file_path.stem.endswith(".xml"):
             return bz2.open(self.file_path, "rb")
         else:
-            raise ValueError(f"Unsupported file type: {self.file_path}")
+            raise ValueError(f"Unsupported file type: {self.file_path}. Expected .xml or .xml.bz2 file")
 
     def _detect_namespace(self) -> str:
         """Detect the namespace of the XML file
@@ -417,7 +430,7 @@ class WikiXmlDumpExtractor(ExtractorBase):
 
         Parameters
         ----------
-        output_file : str
+        output_file : str | Path
             Path where to save the output XML file. Can be a .xml or .xml.bz2 file.
         page_limit : int, optional
             Maximum number of pages to extract, by default 70
