@@ -2,6 +2,7 @@ import re
 import gzip
 import pandas
 from tqdm.auto import tqdm
+from pathlib import Path
 
 
 class WikiSqlExtractor:
@@ -10,7 +11,7 @@ class WikiSqlExtractor:
 
     Parameters
     ----------
-    file_path : str
+    file_path : str or Path
         The path to the Wikipedia SQL dump file.
 
     Examples
@@ -21,11 +22,11 @@ class WikiSqlExtractor:
     """
 
     def __init__(self, file_path):
-        self.file_path = file_path
+        self.file_path = Path(file_path)
         self.columns = self._get_column_names()
 
     def _get_file_handle(self):
-        if self.file_path.endswith(".gz"):
+        if str(self.file_path).endswith(".gz"):
             return gzip.open(self.file_path, mode="rt", encoding="utf-8")
         else:
             return open(self.file_path, mode="rt", encoding="utf-8")

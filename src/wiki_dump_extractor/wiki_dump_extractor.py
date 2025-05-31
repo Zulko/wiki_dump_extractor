@@ -275,7 +275,7 @@ class ExtractorBase(ABC):
         if target_path.exists():
             target_path.unlink()
 
-        # Setup LMDB environment if redirects_db_path is provided
+        # Setup LMDB environments if paths are provided
         redirects_env = None
         if redirects_db_path is not None:
             redirects_db_path = Path(redirects_db_path)
@@ -356,7 +356,6 @@ class ExtractorBase(ABC):
             with open(output_file, "w") as f:
                 json.dump(pages_in_category, f)
         return pages_in_category
-
 
 class WikiXmlDumpExtractor(ExtractorBase):
     """A class for extracting pages from a MediaWiki XML dump file.
