@@ -39,6 +39,8 @@ llm = [
 ]
 test = ["pytest>=7.0.0", "pytest-cov>=4.0.0"]
 
+docs = ["sphinx>=7.0.0", "myst-parser>=2.0.0", "shibuya==2024.10.15"]
+
 [project.urls]
 "Homepage" = "https://github.com/zulko/wiki_extractor"
 
