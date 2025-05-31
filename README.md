@@ -41,7 +41,7 @@ for i, batch in enumerate(batches):
 
 There are many reasons why you might want to convert the dump to Avro. The original `xml.bz2` dump is 22Gb but very slow to read from (250/s), the uncompressed dump is 107Gb, relatively fast to read (this library uses lxml which reads thousands of pages per second), however 50% of the pages in there are empty redirect pages.
 
-The following code converts the batch to a 28G avro dump that only contains the 12 million real pages, and will be much faster to read. The operation takes ~40 minutes depending on your machine.
+The following code converts the batch to a 28G avro dump that only contains the 12 million real pages, stores redirects in a fast LMDB database, and creates an index for quick page lookups. The operation takes ~40 minutes depending on your machine.
 
 ```python
 from wiki_dump_extractor import WikiXmlDumpExtractor
@@ -51,19 +51,37 @@ extractor = WikiXmlDumpExtractor(file_path=file_path)
 ignored_fields = ["timestamp", "page_id", "revision_id", "redirect_title"]
 extractor.extract_pages_to_avro(
     output_file="wiki_dump.avro",
-    ignore_redirects=True,
+    redirects_db_path="redirects.lmdb",  # LMDB database for fast redirect lookups
+    page_index_db="page_index.lmdb",     # LMDB database for fast page position lookups
     ignored_fields=ignored_fields,
 )
 ```
 
-Later on, read the Avro file as follows (reads the 12 million pages in ~3-4 minutes depending on your machine)
+Later on, read the Avro file and use redirects and index as follows (reads the 12 million pages in ~3-4 minutes depending on your machine):
 
 ```python
 from wiki_dump_extractor import WikiAvroDumpExtractor
+import lmdb
 
-extractor = WikiAvroDumpExtractor(file_path="wiki_dump.avro")
-for page in extractor.iter_pages(limit=1000):
-    pass
+# Open the databases
+redirects_env = lmdb.open("redirects.lmdb", readonly=True)
+page_index_env = lmdb.open("page_index.lmdb", readonly=True)
+
+# Create extractor
+extractor = WikiAvroDumpExtractor(
+    file_path="wiki_dump.avro",
+    index_dir="page_index.lmdb"  # Use the index for faster lookups
+)
+
+# Get pages with automatic redirect resolution
+pages = extractor.get_page_batch_by_title(
+    ["Page Title 1", "Page Title 2"], 
+    redirects_env=redirects_env
+)
+
+# Don't forget to close the environments when done
+redirects_env.close()
+page_index_env.close()
 ```
 
 ## Installation
@@ -78,7 +96,18 @@ Or from the source in development mode:
 pip install -e .
 ```
 
-To run the tests just use `pytest` in the root directory.
+To use the LLM-specific module (that would be mostly if you are on a project like Landnotes), use
+
+```bash
+pip install wiki-dump-extractor[llm]
+```
+
+Or locally:
+```bash
+pip install -e ".[llm]"
+```
+
+To install with tests, use `pip install -e ".[dev]"` then run the tests with `pytest` in the root directory.
 
 ### Requirements for running the LLM utils
 
