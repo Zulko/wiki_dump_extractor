@@ -2,6 +2,8 @@
 
 A python library to extract and analyze pages from a wiki dump.
 
+The project is hosted on [GitHub](https://github.com/zulko/wiki_dump_extractor) an the HTML documentation is available [here](https://zulko.github.io/wiki_dump_extractor/).
+
 ## Scope
 
 - Extract pages from a wiki dump
