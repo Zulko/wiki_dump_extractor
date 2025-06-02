@@ -2,16 +2,26 @@
 
 A python library to extract and analyze pages from a wiki dump.
 
+This library is used in particular in the [Landnotes](https://github.com/Zulko/landnotes) project to extract and analyze pages from the Wikipedia dump.
+
 The project is hosted on [GitHub](https://github.com/zulko/wiki_dump_extractor) an the HTML documentation is available [here](https://zulko.github.io/wiki_dump_extractor/).
 
 ## Scope
 
+Make the wikipedia dumps easier to work with:
+
 - Extract pages from a wiki dump
 - Be easy to install and run
-- Be fast (currently 2-10k pages/s on uncompressed archive, 250/s on .bz2 archive, 50k/s on Avro)
+- Be fast (can iterate over 50,000 pages / secong using Avro)
 - Be memory efficient
-- Allow for batch processing
-- Offer a few light utilities for page analysis (e.g. extracting tags and category)
+- Allow for batch processing and parallel processing
+
+Provide utilities for page analysis:
+
+- Date parsing
+- Section extraction
+- Text cleaning
+- and more.
 
 ## Usage
 
@@ -54,20 +64,23 @@ ignored_fields = ["timestamp", "page_id", "revision_id", "redirect_title"]
 extractor.extract_pages_to_avro(
     output_file="wiki_dump.avro",
     redirects_db_path="redirects.lmdb",  # LMDB database for fast redirect lookups
-    page_index_db="page_index.lmdb",     # LMDB database for fast page position lookups
     ignored_fields=ignored_fields,
 )
+```
+
+Then index the pages for fast lookups:
+
+```python
+from wiki_dump_extractor import WikiAvroDumpExtractor
+
+extractor = WikiAvroDumpExtractor(file_path="wiki_dump.avro")
+extractor.index_pages(page_index_db="page_index.lmdb")
 ```
 
 Later on, read the Avro file and use redirects and index as follows (reads the 12 million pages in ~3-4 minutes depending on your machine):
 
 ```python
 from wiki_dump_extractor import WikiAvroDumpExtractor
-import lmdb
-
-# Open the databases
-redirects_env = lmdb.open("redirects.lmdb", readonly=True)
-page_index_env = lmdb.open("page_index.lmdb", readonly=True)
 
 # Create extractor
 extractor = WikiAvroDumpExtractor(
@@ -77,13 +90,8 @@ extractor = WikiAvroDumpExtractor(
 
 # Get pages with automatic redirect resolution
 pages = extractor.get_page_batch_by_title(
-    ["Page Title 1", "Page Title 2"], 
-    redirects_env=redirects_env
+    ["Page Title 1", "Page Title 2"]
 )
-
-# Don't forget to close the environments when done
-redirects_env.close()
-page_index_env.close()
 ```
 
 ## Installation
