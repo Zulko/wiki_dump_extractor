@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Wiki Dump Extractor Reference - wiki_dump_extractor 0.1 documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="prev" title="Wiki dump extractor" href="index.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=83eaa723" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Wiki Dump Extractor Reference"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="index.html">
+      
+      
+      <strong>wiki_dump_extractor</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Wiki Dump Extractor Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#main-extractor">Main Extractor</a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase"><code class="docutils literal notranslate"><span class="pre">ExtractorBase</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_disambiguation_page_titles"><code class="docutils literal notranslate">extract_disambiguation_page_titles()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_pages_to_avro"><code class="docutils literal notranslate">extract_pages_to_avro()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_page_batches"><code class="docutils literal notranslate">iter_page_batches()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_pages"><code class="docutils literal notranslate">iter_pages()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_page_batches_in_parallel"><code class="docutils literal notranslate">process_page_batches_in_parallel()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_pages_async"><code class="docutils literal notranslate">process_pages_async()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page"><code class="docutils literal notranslate"><span class="pre">Page</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.from_xml"><code class="docutils literal notranslate">from_xml()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.get_avro_schema"><code class="docutils literal notranslate">get_avro_schema()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.get_wikipedia_url"><code class="docutils literal notranslate">get_wikipedia_url()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.page_id"><code class="docutils literal notranslate">page_id</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.redirect_title"><code class="docutils literal notranslate">redirect_title</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.revision_id"><code class="docutils literal notranslate">revision_id</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.text"><code class="docutils literal notranslate">text</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.timestamp"><code class="docutils literal notranslate">timestamp</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.title"><code class="docutils literal notranslate">title</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page.to_dict"><code class="docutils literal notranslate">to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor"><code class="docutils literal notranslate"><span class="pre">WikiAvroDumpExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.extract_pages_titles_to_new_dump"><code class="docutils literal notranslate">extract_pages_titles_to_new_dump()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_batch_by_title"><code class="docutils literal notranslate">get_page_batch_by_title()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_by_title"><code class="docutils literal notranslate">get_page_by_title()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.index_pages"><code class="docutils literal notranslate">index_pages()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.iter_pages_by_title"><code class="docutils literal notranslate">iter_pages_by_title()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor"><code class="docutils literal notranslate"><span class="pre">WikiXmlDumpExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor.extract_pages_to_new_xml"><code class="docutils literal notranslate">extract_pages_to_new_xml()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#utility-modules">Utility Modules</a><ul>
+<li><a class="reference internal" href="#date-utilities">Date Utilities</a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DashYMDFormat"><code class="docutils literal notranslate"><span class="pre">DashYMDFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DashYMDFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DashYMDFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DashYMDFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date"><code class="docutils literal notranslate"><span class="pre">Date</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.day"><code class="docutils literal notranslate">day</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.is_approximate"><code class="docutils literal notranslate">is_approximate</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.month"><code class="docutils literal notranslate">month</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.to_dict"><code class="docutils literal notranslate">to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.to_string"><code class="docutils literal notranslate">to_string()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.validate"><code class="docutils literal notranslate">validate()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date.year"><code class="docutils literal notranslate">year</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat"><code class="docutils literal notranslate"><span class="pre">DateFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat.convert_month_to_number"><code class="docutils literal notranslate">convert_month_to_number()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat.list_dates"><code class="docutils literal notranslate">list_dates()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange"><code class="docutils literal notranslate"><span class="pre">DateRange</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange.end"><code class="docutils literal notranslate">end</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange.from_parsed_string"><code class="docutils literal notranslate">from_parsed_string()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange.start"><code class="docutils literal notranslate">start</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange.to_dict"><code class="docutils literal notranslate">to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange.to_string"><code class="docutils literal notranslate">to_string()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat"><code class="docutils literal notranslate"><span class="pre">DayMonthYearFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.re_dmy"><code class="docutils literal notranslate">re_dmy</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DetectedDate"><code class="docutils literal notranslate"><span class="pre">DetectedDate</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DetectedDate.date"><code class="docutils literal notranslate">date</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DetectedDate.date_str"><code class="docutils literal notranslate">date_str</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DetectedDate.format"><code class="docutils literal notranslate">format</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.DetectedDate.to_dict"><code class="docutils literal notranslate">to_dict()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat"><code class="docutils literal notranslate"><span class="pre">MonthDayYearFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.re_mdy"><code class="docutils literal notranslate">re_mdy</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthYearFormat"><code class="docutils literal notranslate"><span class="pre">MonthYearFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthYearFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthYearFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.MonthYearFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat"><code class="docutils literal notranslate"><span class="pre">SlashDMYMDYFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WikiDateFormat"><code class="docutils literal notranslate"><span class="pre">WikiDateFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WikiDateFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WikiDateFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WikiDateFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WrittenDateFormat"><code class="docutils literal notranslate"><span class="pre">WrittenDateFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.YearFormat"><code class="docutils literal notranslate"><span class="pre">YearFormat</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.YearFormat.match_to_date"><code class="docutils literal notranslate">match_to_date()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.YearFormat.name"><code class="docutils literal notranslate">name</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.YearFormat.pattern"><code class="docutils literal notranslate">pattern</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.date_utils.extract_dates"><code class="docutils literal notranslate"><span class="pre">extract_dates()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#page-utilities">Page Utilities</a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section"><code class="docutils literal notranslate"><span class="pre">Section</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.all_subsections_text_dict"><code class="docutils literal notranslate">all_subsections_text_dict()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.children"><code class="docutils literal notranslate">children</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.from_page_section_texts"><code class="docutils literal notranslate">from_page_section_texts()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.from_page_text"><code class="docutils literal notranslate">from_page_text()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.from_single_section_text"><code class="docutils literal notranslate">from_single_section_text()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.get_section_text_by_title"><code class="docutils literal notranslate">get_section_text_by_title()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.level"><code class="docutils literal notranslate">level</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.parent"><code class="docutils literal notranslate">parent</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.text"><code class="docutils literal notranslate">text</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.title"><code class="docutils literal notranslate">title</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.title_with_parents"><code class="docutils literal notranslate">title_with_parents</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.to_dict"><code class="docutils literal notranslate">to_dict()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section.with_cleaned_text"><code class="docutils literal notranslate">with_cleaned_text()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.extract_categories"><code class="docutils literal notranslate"><span class="pre">extract_categories()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.extract_filenames"><code class="docutils literal notranslate"><span class="pre">extract_filenames()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.extract_geospatial_coordinates"><code class="docutils literal notranslate"><span class="pre">extract_geospatial_coordinates()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.extract_infobox_category"><code class="docutils literal notranslate"><span class="pre">extract_infobox_category()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.extract_links"><code class="docutils literal notranslate"><span class="pre">extract_links()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.get_short_description"><code class="docutils literal notranslate"><span class="pre">get_short_description()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.parse_infobox"><code class="docutils literal notranslate"><span class="pre">parse_infobox()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.remove_appendix_sections"><code class="docutils literal notranslate"><span class="pre">remove_appendix_sections()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.remove_comments_and_citations"><code class="docutils literal notranslate"><span class="pre">remove_comments_and_citations()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.replace_file_links_with_captions"><code class="docutils literal notranslate"><span class="pre">replace_file_links_with_captions()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.replace_nsbp_by_spaces"><code class="docutils literal notranslate"><span class="pre">replace_nsbp_by_spaces()</span></code></a></li>
+<li><a class="reference internal" href="#wiki_dump_extractor.page_utils.replace_titles_with_section_headers"><code class="docutils literal notranslate"><span class="pre">replace_titles_with_section_headers()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#download-utilities">Download Utilities</a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.download_utils.download_file"><code class="docutils literal notranslate"><span class="pre">download_file()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#llm-utilities">LLM Utilities</a></li>
+<li><a class="reference internal" href="#sql-extractor">SQL Extractor</a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor"><code class="docutils literal notranslate"><span class="pre">WikiSqlExtractor</span></code></a><ul>
+<li><a class="reference internal" href="#wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor.to_pandas_dataframe"><code class="docutils literal notranslate">to_pandas_dataframe()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="index.html"><span itemprop="name">wiki_dump_extractor</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Wiki Dump Extractor Reference</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="wiki-dump-extractor-reference">
+<h1>Wiki Dump Extractor Reference<a class="headerlink" href="#wiki-dump-extractor-reference" title="Link to this heading">¶</a></h1>
+<p>This section contains the API reference for the Wiki Dump Extractor package.</p>
+<section id="main-extractor">
+<h2>Main Extractor<a class="headerlink" href="#main-extractor" title="Link to this heading">¶</a></h2>
+<dl class="py class" id="module-wiki_dump_extractor.wiki_dump_extractor">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.wiki_dump_extractor.</span></span><span class="sig-name descname"><span class="pre">ExtractorBase</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_disambiguation_page_titles">
+<span class="sig-name descname"><span class="pre">extract_disambiguation_page_titles</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.extract_disambiguation_page_titles"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_disambiguation_page_titles" title="Link to this definition">¶</a></dt>
+<dd><p>Extract disambiguation pages from the dump file.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>output_file<span class="classifier">str</span></dt><dd><p>Path where to save the output Avro file.</p>
+</dd>
+<dt>page_limit<span class="classifier">int, optional</span></dt><dd><p>Maximum number of pages to extract, by default None</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_pages_to_avro">
+<span class="sig-name descname"><span class="pre">extract_pages_to_avro</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirects_db_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignored_fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">10000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">codec</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'zstandard'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.extract_pages_to_avro"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.extract_pages_to_avro" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the XML dump file to an Avro file.</p>
+<section id="id1">
+<h3>Parameters<a class="headerlink" href="#id1" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>output_file<span class="classifier">str</span></dt><dd><p>Path where to save the output Avro file.</p>
+</dd>
+<dt>redirects_db_path<span class="classifier">str | Path, optional</span></dt><dd><p>Path where to save the redirects LMDB database.</p>
+</dd>
+<dt>ignored_fields<span class="classifier">List[str], optional</span></dt><dd><p>Fields to ignore, by default [“text”]</p>
+</dd>
+<dt>batch_size<span class="classifier">int, optional</span></dt><dd><p>Number of pages per batch, by default 10_000</p>
+</dd>
+<dt>page_limit<span class="classifier">int, optional</span></dt><dd><p>Maximum number of pages to extract, by default None</p>
+</dd>
+<dt>codec<span class="classifier">str, optional</span></dt><dd><p>Codec to use for compression, by default “zstandard”</p>
+</dd>
+<dt>page_filter<span class="classifier">Callable[[Page], bool], optional</span></dt><dd><p>A function that takes a Page object and returns a boolean.
+If the function returns False, the page will not be included in the Avro file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_page_batches">
+<span class="sig-name descname"><span class="pre">iter_page_batches</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.iter_page_batches"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_page_batches" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate over pages in batches.</p>
+<p>Each return is a list of Page objects with fields title, page_id,
+timestamp, redirect_title, revision_id, and text.</p>
+<p>This method iterates over the pages in the dump file and yields batches of
+pages. If a limit is provided, the iteration will stop after the specified
+number of batches have been returned.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>batch_size<span class="classifier">int</span></dt><dd><p>The number of pages per batch.</p>
+</dd>
+<dt>page_limit<span class="classifier">int | None, optional</span></dt><dd><p>The maximum number of pages to return.</p>
+</dd>
+<dt>page_filter<span class="classifier">Callable[[Page], bool], optional</span></dt><dd><p>A function that takes a Page object and returns a boolean.
+If the function returns False, the page will not be included in the batch.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>Iterator[list[Page]]</dt><dd><p>An iterator over lists of pages.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_pages">
+<span class="sig-name descname"><span class="pre">iter_pages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Iterator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.iter_pages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.iter_pages" title="Link to this definition">¶</a></dt>
+<dd><p>Iterate over all pages in the dump file.</p>
+<p>The returned elements are Page objects with fields title, page_id,
+timestamp, redirect_title, revision_id, and text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_page_batches_in_parallel">
+<span class="sig-name descname"><span class="pre">process_page_batches_in_parallel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_fn</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Callable</span><span class="p"><span class="pre">[</span></span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">bool</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered_results</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.process_page_batches_in_parallel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_page_batches_in_parallel" title="Link to this definition">¶</a></dt>
+<dd><p>Apply a function to each batch of pages in parallel.</p>
+<p>This method is useful for speeding up the extraction of pages from the
+dump file.</p>
+<section id="id3">
+<h3>Parameters<a class="headerlink" href="#id3" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>action<span class="classifier">Callable[[List[Page], int], Any]</span></dt><dd><p>A function that takes a list of Page objects and an integer and returns
+any value.</p>
+</dd>
+<dt>num_workers<span class="classifier">int</span></dt><dd><p>The number of workers to use.</p>
+</dd>
+<dt>batch_size<span class="classifier">int</span></dt><dd><p>The number of pages per batch.</p>
+</dd>
+<dt>page_limit<span class="classifier">int | None, optional</span></dt><dd><p>The maximum number of pages to return.</p>
+</dd>
+<dt>page_filter<span class="classifier">Callable[[Page], bool], optional</span></dt><dd><p>A function that takes a Page object and returns a boolean.
+If the function returns False, the page will not be included in the batch.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_pages_async">
+<em class="property"><span class="k"><span class="pre">async</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">process_pages_async</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">process_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_workers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_limit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ordered</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">AsyncGenerator</span><span class="p"><span class="pre">[</span></span><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Any</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#ExtractorBase.process_pages_async"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase.process_pages_async" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.wiki_dump_extractor.</span></span><span class="sig-name descname"><span class="pre">Page</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timestamp</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirect_title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">revision_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#Page"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Represents a page in the Wikipedia dump.</p>
+<section id="attributes">
+<h3>Attributes<a class="headerlink" href="#attributes" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>page_id: int</dt><dd><p>The ID of the page.</p>
+</dd>
+<dt>title: str</dt><dd><p>The title of the page.</p>
+</dd>
+<dt>timestamp: datetime</dt><dd><p>The timestamp of the page.</p>
+</dd>
+<dt>redirect_title: str | None</dt><dd><p>The title of the page if it is a redirect.</p>
+</dd>
+<dt>revision_id: str</dt><dd><p>The ID of the revision.</p>
+</dd>
+<dt>text: str</dt><dd><p>The text of the page.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.from_xml">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elem</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Element</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">namespace</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#Page.from_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.from_xml" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.get_avro_schema">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">get_avro_schema</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ignored_fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fields</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#Page.get_avro_schema"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.get_avro_schema" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.get_wikipedia_url">
+<span class="sig-name descname"><span class="pre">get_wikipedia_url</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#Page.get_wikipedia_url"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.get_wikipedia_url" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.page_id">
+<span class="sig-name descname"><span class="pre">page_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.page_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.redirect_title">
+<span class="sig-name descname"><span class="pre">redirect_title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.redirect_title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.revision_id">
+<span class="sig-name descname"><span class="pre">revision_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.revision_id" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.text" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.timestamp">
+<span class="sig-name descname"><span class="pre">timestamp</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">datetime</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.timestamp" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.Page.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#Page.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.Page.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.wiki_dump_extractor.</span></span><span class="sig-name descname"><span class="pre">WikiAvroDumpExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase" title="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractorBase</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.extract_pages_titles_to_new_dump">
+<span class="sig-name descname"><span class="pre">extract_pages_titles_to_new_dump</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_titles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">output_avro_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirects_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Environment</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_titles_not_found</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor.extract_pages_titles_to_new_dump"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.extract_pages_titles_to_new_dump" title="Link to this definition">¶</a></dt>
+<dd><p>Extract a list of pages by their titles to a new Avro file.</p>
+<section id="id4">
+<h3>Parameters<a class="headerlink" href="#id4" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>page_titles<span class="classifier">List[str]</span></dt><dd><p>The titles of the pages to extract.</p>
+</dd>
+<dt>output_avro_file<span class="classifier">str</span></dt><dd><p>Path where to save the output Avro file.</p>
+</dd>
+<dt>replace_file<span class="classifier">bool, optional</span></dt><dd><p>Whether to replace the output file if it exists.</p>
+</dd>
+<dt>batch_size<span class="classifier">int, optional</span></dt><dd><p>Size of batches to process at once.</p>
+</dd>
+<dt>redirects_env<span class="classifier">lmdb.Environment, optional</span></dt><dd><p>LMDB environment containing redirects mapping.</p>
+</dd>
+<dt>ignore_titles_not_found<span class="classifier">bool, optional</span></dt><dd><p>Whether to ignore titles that are not found in the index.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_batch_by_title">
+<span class="sig-name descname"><span class="pre">get_page_batch_by_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redirects_env</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Environment</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ignore_titles_not_found</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor.get_page_batch_by_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_batch_by_title" title="Link to this definition">¶</a></dt>
+<dd><p>Get a batch of pages by their titles.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>titles<span class="classifier">List[str]</span></dt><dd><p>The titles of the pages to get.</p>
+</dd>
+<dt>redirects_env<span class="classifier">lmdb.Environment, optional</span></dt><dd><p>LMDB environment containing redirects mapping.</p>
+</dd>
+<dt>ignore_titles_not_found<span class="classifier">bool, optional</span></dt><dd><p>Whether to ignore titles that are not found in the index.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_by_title">
+<span class="sig-name descname"><span class="pre">get_page_by_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor.get_page_by_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.get_page_by_title" title="Link to this definition">¶</a></dt>
+<dd><p>Get a page by its title.</p>
+<section id="id6">
+<h3>Parameters<a class="headerlink" href="#id6" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>title<span class="classifier">str</span></dt><dd><p>The title of the page to get.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.index_pages">
+<span class="sig-name descname"><span class="pre">index_pages</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor.index_pages"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.index_pages" title="Link to this definition">¶</a></dt>
+<dd><p>Index the pages in the Avro file.</p>
+<section id="id7">
+<h3>Parameters<a class="headerlink" href="#id7" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>index_file<span class="classifier">str</span></dt><dd><p>Path where to save the index file.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.iter_pages_by_title">
+<span class="sig-name descname"><span class="pre">iter_pages_by_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">titles</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Generator</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.Page" title="wiki_dump_extractor.wiki_dump_extractor.Page"><span class="pre">Page</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">None</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiAvroDumpExtractor.iter_pages_by_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiAvroDumpExtractor.iter_pages_by_title" title="Link to this definition">¶</a></dt>
+<dd><p>Get a page by its title.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>title<span class="classifier">str</span></dt><dd><p>The title of the page to get.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.wiki_dump_extractor.</span></span><span class="sig-name descname"><span class="pre">WikiXmlDumpExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiXmlDumpExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.wiki_dump_extractor.ExtractorBase" title="wiki_dump_extractor.wiki_dump_extractor.ExtractorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">ExtractorBase</span></code></a></p>
+<p>A class for extracting pages from a MediaWiki XML dump file.
+This class provides functionality to parse and extract pages from MediaWiki XML
+dump files, which can be either uncompressed (.xml) or bzip2 compressed
+(.xml.bz2). It handles the XML namespace detection automatically and provides
+iterators for processing pages individuallyor in batches.</p>
+<section id="id9">
+<h3>Parameters<a class="headerlink" href="#id9" title="Link to this heading">¶</a></h3>
+<dl class="simple">
+<dt>file_path<span class="classifier">str | Path</span></dt><dd><p>Path to the MediaWiki XML dump file (.xml or .xml.bz2)</p>
+</dd>
+</dl>
+</section>
+<section id="examples">
+<h3>Examples<a class="headerlink" href="#examples" title="Link to this heading">¶</a></h3>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiDumpExtractor</span><span class="p">(</span><span class="s2">&quot;dump.xml.bz2&quot;</span><span class="p">)</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">iter_pages</span><span class="p">():</span>
+</span><span data-line="3"><span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Process pages in batches</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">iter_page_batches</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+</span><span data-line="3"><span class="gp">... </span>    <span class="n">process_batch</span><span class="p">(</span><span class="n">batch</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor.extract_pages_to_new_xml">
+<span class="sig-name descname"><span class="pre">extract_pages_to_new_xml</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">output_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">limit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_dump_extractor.html#WikiXmlDumpExtractor.extract_pages_to_new_xml"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_dump_extractor.WikiXmlDumpExtractor.extract_pages_to_new_xml" title="Link to this definition">¶</a></dt>
+<dd><p>Create a smaller XML dump file by extracting a limited number of pages.</p>
+<p>This is useful for debugging, testing, creating examples, etc.</p>
+<section id="id10">
+<h4>Parameters<a class="headerlink" href="#id10" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>output_file<span class="classifier">str | Path</span></dt><dd><p>Path where to save the output XML file. Can be a .xml or .xml.bz2 file.</p>
+</dd>
+<dt>page_limit<span class="classifier">int, optional</span></dt><dd><p>Maximum number of pages to extract, by default 70</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+<section id="utility-modules">
+<h2>Utility Modules<a class="headerlink" href="#utility-modules" title="Link to this heading">¶</a></h2>
+<section id="date-utilities">
+<h3>Date Utilities<a class="headerlink" href="#date-utilities" title="Link to this heading">¶</a></h3>
+<dl class="py class" id="module-wiki_dump_extractor.date_utils">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DashYMDFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">DashYMDFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DashYMDFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DashYMDFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for YYYY-MM-DD dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DashYMDFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DashYMDFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DashYMDFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id11">
+<h4>Parameters<a class="headerlink" href="#id11" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h4>Returns<a class="headerlink" href="#id12" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h4>Raises<a class="headerlink" href="#raises" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DashYMDFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DASH_YMD'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DashYMDFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DashYMDFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\b(\\d{1,4})[-/](\\d{1,2})[-/](\\d{1,2})(?:\\s+(BC|BCE))?\\b',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DashYMDFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">Date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">year</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">month</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">day</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">is_approximate</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#Date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.day">
+<span class="sig-name descname"><span class="pre">day</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.day" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.is_approximate">
+<span class="sig-name descname"><span class="pre">is_approximate</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">bool</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.is_approximate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.month">
+<span class="sig-name descname"><span class="pre">month</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.month" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#Date.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.to_string">
+<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#Date.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.to_string" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.validate">
+<span class="sig-name descname"><span class="pre">validate</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#Date.validate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.validate" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.Date.year">
+<span class="sig-name descname"><span class="pre">year</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.Date.year" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">DateFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></p>
+<p>Base class for all date format detectors.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat.convert_month_to_number">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">convert_month_to_number</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">month_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">int</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateFormat.convert_month_to_number"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat.convert_month_to_number" title="Link to this definition">¶</a></dt>
+<dd><p>Convert month name to its numerical representation.</p>
+<section id="id13">
+<h4>Raises<a class="headerlink" href="#id13" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the month name is not recognized</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat.list_dates">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">list_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">bool</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateFormat.list_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat.list_dates" title="Link to this definition">¶</a></dt>
+<dd><p>Check if the text contains any dates detected by regex patterns.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">abstractmethod</span></span><span class="w"> </span><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id14">
+<h4>Parameters<a class="headerlink" href="#id14" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h4>Returns<a class="headerlink" href="#id15" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h4>Raises<a class="headerlink" href="#id16" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">DateRange</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">wiki_dump_extractor.date_utils.Date</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">wiki_dump_extractor.date_utils.Date</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateRange"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange.end">
+<span class="sig-name descname"><span class="pre">end</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange.end" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange.from_parsed_string">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_parsed_string</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.DateRange" title="wiki_dump_extractor.date_utils.DateRange"><span class="pre">DateRange</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateRange.from_parsed_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange.from_parsed_string" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a string representation of a date or date range into a DateRange object.</p>
+<p>Examples:
+1810 -&gt; ~1810/01/01 - ~1810/12/31
+1810-1812 -&gt; ~1810/01/01 - ~1812/12/31
+1810/1812 -&gt; ~1810/01/01 - ~1812/12/31
+1810/03/05 -&gt; 1810/03/05 - 1810/03/05
+1810/03 -&gt; ~1810/03/01 - ~1810/03/31
+1810/03 - 1812/05 -&gt; ~1810/03/01 - ~1812/05/31
+1810/03/05 - 1812/05/07 -&gt; 1810/03/05 - 1812/05/07
+1611/1612 - 1615/1617 -&gt; ~1611/01/01 - ~1617/12/31
+1930s - 1940s -&gt; ~1930/01/01 - ~1949/12/31
+1930s -&gt; ~1930/01/01 - ~1939/12/31</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange.start">
+<span class="sig-name descname"><span class="pre">start</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange.start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateRange.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DateRange.to_string">
+<span class="sig-name descname"><span class="pre">to_string</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DateRange.to_string"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DateRange.to_string" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DayMonthYearFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">DayMonthYearFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DayMonthYearFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for DD Month YYYY dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DayMonthYearFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DayMonthYearFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id17">
+<h4>Parameters<a class="headerlink" href="#id17" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h4>Returns<a class="headerlink" href="#id18" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h4>Raises<a class="headerlink" href="#id19" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DayMonthYearFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'DAY_MONTH_YEAR'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DayMonthYearFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile(&quot;\\b\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(\\d{1,2})</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Day</span> <span class="pre">(1-2</span> <span class="pre">digits)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\s+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|J,</span> <span class="pre">re.IGNORECASE|re.VERBOSE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DayMonthYearFormat.re_dmy">
+<span class="sig-name descname"><span class="pre">re_dmy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;\\b\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(\\d{1,2})</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Day</span> <span class="pre">(1-2</span> <span class="pre">digits)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\s+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Month</span> <span class="pre">(provided</span> <span class="pre">externally)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[,\\s]+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(?:AD\\s*)?\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(\\d{1,4})</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Year</span> <span class="pre">(1-4</span> <span class="pre">digits)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(?:\\s+(BC|BCE))?</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Optional</span> <span class="pre">'</span> <span class="pre">BC'\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\b\n</span>&#160;&#160;&#160; <span class="pre">&quot;</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DayMonthYearFormat.re_dmy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DetectedDate">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">DetectedDate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">date</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">wiki_dump_extractor.date_utils.Date</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">format</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">date_str</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DetectedDate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DetectedDate" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DetectedDate.date">
+<span class="sig-name descname"><span class="pre">date</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DetectedDate.date" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DetectedDate.date_str">
+<span class="sig-name descname"><span class="pre">date_str</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DetectedDate.date_str" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DetectedDate.format">
+<span class="sig-name descname"><span class="pre">format</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.DetectedDate.format" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.DetectedDate.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#DetectedDate.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.DetectedDate.to_dict" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthDayYearFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">MonthDayYearFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#MonthDayYearFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for Month DD YYYY dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthDayYearFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#MonthDayYearFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id20">
+<h4>Parameters<a class="headerlink" href="#id20" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h4>Returns<a class="headerlink" href="#id21" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h4>Raises<a class="headerlink" href="#id22" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthDayYearFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'MONTH_DAY_YEAR'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthDayYearFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile(&quot;\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\b\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Month</span> <span class="pre">name\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\s+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(,</span> <span class="pre">re.IGNORECASE|re.VERBOSE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthDayYearFormat.re_mdy">
+<span class="sig-name descname"><span class="pre">re_mdy</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&quot;\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\b\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Month</span> <span class="pre">name\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\s+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(\\d{1,2})</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Day</span> <span class="pre">(1</span> <span class="pre">or</span> <span class="pre">2</span> <span class="pre">digits)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(?:st|nd|rd|th)?</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Optional</span> <span class="pre">ordinal</span> <span class="pre">suffix\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">[,\\s]+\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(?:AD\\s*)?\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(\\d{1,4})</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Year</span> <span class="pre">(1</span> <span class="pre">to</span> <span class="pre">4</span> <span class="pre">digits)\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">(?:\\s+(BC|BCE))?</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">#</span> <span class="pre">Optional</span> <span class="pre">'</span> <span class="pre">BC'\n</span>&#160;&#160;&#160;&#160;&#160;&#160;&#160; <span class="pre">\\b\n</span>&#160;&#160;&#160; <span class="pre">&quot;</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthDayYearFormat.re_mdy" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthYearFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">MonthYearFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#MonthYearFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthYearFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for Month YYYY dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthYearFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#MonthYearFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthYearFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id23">
+<h4>Parameters<a class="headerlink" href="#id23" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id24">
+<h4>Returns<a class="headerlink" href="#id24" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id25">
+<h4>Raises<a class="headerlink" href="#id25" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthYearFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'MONTH_YEAR'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthYearFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.MonthYearFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s*(?:AD\\s*)?(\\d{2,4})(?:\\s+(BC|BCE))?\\b',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.MonthYearFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.SlashDMYMDYFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">SlashDMYMDYFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#SlashDMYMDYFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for DD/MM/YYYY or MM/DD/YYYY dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.SlashDMYMDYFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#SlashDMYMDYFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id26">
+<h4>Parameters<a class="headerlink" href="#id26" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id27">
+<h4>Returns<a class="headerlink" href="#id27" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id28">
+<h4>Raises<a class="headerlink" href="#id28" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.SlashDMYMDYFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'SLASH_DMY_MDY'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.SlashDMYMDYFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\B[^|](\\d{1,2})[-/](\\d{1,2})[-/](\\d{1,4})(?:\\s+(BC|BCE))?\\b',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.SlashDMYMDYFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WikiDateFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">WikiDateFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#WikiDateFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.WikiDateFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for {{Birth date|YYYY|MM|DD|…}}.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WikiDateFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#WikiDateFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.WikiDateFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id29">
+<h4>Parameters<a class="headerlink" href="#id29" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id30">
+<h4>Returns<a class="headerlink" href="#id30" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id31">
+<h4>Raises<a class="headerlink" href="#id31" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WikiDateFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'WIKI_BIRTH_DATE'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.WikiDateFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WikiDateFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('{{[^|]*\\|(\\d{1,4})\\|(\\d{1,2})\\|(\\d{1,2}).*}}',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.WikiDateFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WrittenDateFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">WrittenDateFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#WrittenDateFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.WrittenDateFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for Month the day, year dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WrittenDateFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">datetime</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#WrittenDateFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id32">
+<h4>Parameters<a class="headerlink" href="#id32" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id33">
+<h4>Returns<a class="headerlink" href="#id33" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id34">
+<h4>Raises<a class="headerlink" href="#id34" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WrittenDateFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'WRITTEN_DATE'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.WrittenDateFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\b(January|February|March|April|May|June|July|August|September|October|November|December|Jan|Feb|Mar|Apr|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+the\\s+(?:(\\d{1,2})(?:st|nd|rd|th)?|([a-z]+))[,\\s]+(\\d{1,4,</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.WrittenDateFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.YearFormat">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">YearFormat</span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#YearFormat"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.YearFormat" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#wiki_dump_extractor.date_utils.DateFormat" title="wiki_dump_extractor.date_utils.DateFormat"><code class="xref py py-class docutils literal notranslate"><span class="pre">DateFormat</span></code></a></p>
+<p>Format for YYYY dates.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.YearFormat.match_to_date">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">match_to_date</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">match</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Match</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.date_utils.Date" title="wiki_dump_extractor.date_utils.Date"><span class="pre">Date</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#YearFormat.match_to_date"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.YearFormat.match_to_date" title="Link to this definition">¶</a></dt>
+<dd><p>Convert a regex match to a datetime object.</p>
+<section id="id35">
+<h4>Parameters<a class="headerlink" href="#id35" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>match<span class="classifier">re.Match</span></dt><dd><p>The regex match object containing the date information</p>
+</dd>
+</dl>
+</section>
+<section id="id36">
+<h4>Returns<a class="headerlink" href="#id36" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>datetime</dt><dd><p>The parsed datetime object</p>
+</dd>
+</dl>
+</section>
+<section id="id37">
+<h4>Raises<a class="headerlink" href="#id37" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If the match cannot be converted to a valid datetime</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.YearFormat.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'YEAR'</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.YearFormat.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.YearFormat.pattern">
+<span class="sig-name descname"><span class="pre">pattern</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">Pattern</span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">re.compile('\\b(?:c\\.|in|from|to)\\s*(?:AD\\s*)?(\\d{1,4})(?:\\s*(BC|BCE))?[\\s,\\.,\\)]',</span> <span class="pre">re.IGNORECASE)</span></em><a class="headerlink" href="#wiki_dump_extractor.date_utils.YearFormat.pattern" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.date_utils.extract_dates">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.date_utils.</span></span><span class="sig-name descname"><span class="pre">extract_dates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">Dict</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/date_utils.html#extract_dates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.date_utils.extract_dates" title="Link to this definition">¶</a></dt>
+<dd><p>Extract dates from text with context information.</p>
+<section id="id38">
+<h4>Parameters<a class="headerlink" href="#id38" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>text<span class="classifier">str</span></dt><dd><p>The text to extract dates from.</p>
+</dd>
+</dl>
+</section>
+<section id="id39">
+<h4>Returns<a class="headerlink" href="#id39" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>List[Dict]</dt><dd><p>A list of dictionaries containing:
+- ‘date_str’: The original date string found
+- ‘format’: The name of the date format
+- ‘datetime’: The parsed datetime object (if parsing was successful)</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+<section id="page-utilities">
+<h3>Page Utilities<a class="headerlink" href="#page-utilities" title="Link to this heading">¶</a></h3>
+<dl class="py class" id="module-wiki_dump_extractor.page_utils">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">Section</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level:</span> <span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">text:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">children:</span> <span class="pre">List[ForwardRef('Section')]</span> <span class="pre">=</span> <span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">parent:</span> <span class="pre">Optional[ForwardRef('Section')]</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.all_subsections_text_dict">
+<span class="sig-name descname"><span class="pre">all_subsections_text_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text_dict</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.all_subsections_text_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.all_subsections_text_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Recursively collect text from a section and all its subsections.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>text_dict: Dictionary to store section titles and texts</p>
+</dd>
+<dt>Returns:</dt><dd><p>Dictionary mapping section titles to their text content</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.children">
+<span class="sig-name descname"><span class="pre">children</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section" title="wiki_dump_extractor.page_utils.Section"><span class="pre">Section</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.children" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.from_page_section_texts">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_page_section_texts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">texts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section" title="wiki_dump_extractor.page_utils.Section"><span class="pre">Section</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.from_page_section_texts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.from_page_section_texts" title="Link to this definition">¶</a></dt>
+<dd><p>Build a tree of Section objects from a list of section texts.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.from_page_text">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">from_page_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section" title="wiki_dump_extractor.page_utils.Section"><span class="pre">Section</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.from_page_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.from_page_text" title="Link to this definition">¶</a></dt>
+<dd><p>Build a tree of Section objects from a page text.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.from_single_section_text">
+<span class="sig-name descname"><span class="pre">from_single_section_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section" title="wiki_dump_extractor.page_utils.Section"><span class="pre">Section</span></a></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.from_single_section_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.from_single_section_text" title="Link to this definition">¶</a></dt>
+<dd><p>Parse a heading string of the form ‘== Title ==’ or ‘=== Title ===’
+and return a Section with the appropriate level and title.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.get_section_text_by_title">
+<span class="sig-name descname"><span class="pre">get_section_text_by_title</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.get_section_text_by_title"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.get_section_text_by_title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.level">
+<span class="sig-name descname"><span class="pre">level</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.level" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.parent">
+<span class="sig-name descname"><span class="pre">parent</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="#wiki_dump_extractor.page_utils.Section" title="wiki_dump_extractor.page_utils.Section"><span class="pre">Section</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.parent" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.text">
+<span class="sig-name descname"><span class="pre">text</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">''</span></em><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.text" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.title">
+<span class="sig-name descname"><span class="pre">title</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.title" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.title_with_parents">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">title_with_parents</span></span><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.title_with_parents" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.to_dict">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.to_dict" title="Link to this definition">¶</a></dt>
+<dd><p>Convert the Section to a dictionary representation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.Section.with_cleaned_text">
+<span class="sig-name descname"><span class="pre">with_cleaned_text</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#Section.with_cleaned_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.Section.with_cleaned_text" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.extract_categories">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">extract_categories</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#extract_categories"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.extract_categories" title="Link to this definition">¶</a></dt>
+<dd><p>Extract categories from Wikipedia text.</p>
+<section id="id40">
+<h4>Parameters<a class="headerlink" href="#id40" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>text<span class="classifier">str</span></dt><dd><p>The Wikipedia page text to extract categories from.</p>
+</dd>
+</dl>
+</section>
+<section id="id41">
+<h4>Returns<a class="headerlink" href="#id41" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>List[str]</dt><dd><p>A list of category names with spaces normalized and sorted alphabetically.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.extract_filenames">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">extract_filenames</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wiki_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#extract_filenames"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.extract_filenames" title="Link to this definition">¶</a></dt>
+<dd><p>Extract the filename from a MediaWiki file link using regular expressions.</p>
+<dl class="simple">
+<dt>Args:</dt><dd><p>wiki_file_text (str): The MediaWiki file link text</p>
+</dd>
+<dt>Yields:</dt><dd><p>str: Each extracted filename found in the text</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.extract_geospatial_coordinates">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">extract_geospatial_coordinates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#extract_geospatial_coordinates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.extract_geospatial_coordinates" title="Link to this definition">¶</a></dt>
+<dd><p>Return geographical coordinates (latitude, longitude) from Wikipedia page text.</p>
+<section id="id42">
+<h4>Parameters<a class="headerlink" href="#id42" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>text<span class="classifier">str</span></dt><dd><p>The wikipedia page text to extract coordinates from.</p>
+</dd>
+</dl>
+</section>
+<section id="id43">
+<h4>Returns<a class="headerlink" href="#id43" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>tuple[float, float] | None</dt><dd><p>The geographical coordinates (latitude, longitude) or None if no coordinates are found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.extract_infobox_category">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">extract_infobox_category</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#extract_infobox_category"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.extract_infobox_category" title="Link to this definition">¶</a></dt>
+<dd><p>Extract the broad category from the infobox of a Wikipedia page.</p>
+<section id="id44">
+<h4>Parameters<a class="headerlink" href="#id44" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>text<span class="classifier">str</span></dt><dd><p>The wikipedia page text to extract the infobox category from.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.extract_links">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">extract_links</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wiki_text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#extract_links"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.extract_links" title="Link to this definition">¶</a></dt>
+<dd><p>Extract all the links of the form [[true page|text]] in a dict of the form
+{text: true page}</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.get_short_description">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">get_short_description</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#get_short_description"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.get_short_description" title="Link to this definition">¶</a></dt>
+<dd><p>Return the short description of the page.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.parse_infobox">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">parse_infobox</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">page_text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#parse_infobox"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.parse_infobox" title="Link to this definition">¶</a></dt>
+<dd><p>Parse the infobox from a Wikipedia page text.</p>
+<p>Example of infobox. This recognizes the “{{Infobox” pattern. then parses
+the fields starting with “|” as key-value pairs.</p>
+<p>{{Infobox military conflict
+| conflict          = First Battle of the Marne
+| partof            = the [[Western Front (World War I)|Western Front]] of [[World War I]]
+| image             = German soldiers Battle of Marne WWI.jpg
+| image_size        = 300
+| caption           = German soldiers (wearing distinctive [[pickelhaube]
+| date              = 5–14 September 1914
+| place             = [[Marne River]] near [[Brasles]], east of Paris
+| coordinates       = {{coord|49|1|N|3|23|E|region:FR_type:event|display= inline}}
+| result            = Allied victory
+| territory         = German advance to Paris repulsed
+}}</p>
+<section id="id45">
+<h4>Parameters<a class="headerlink" href="#id45" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>page_text<span class="classifier">str</span></dt><dd><p>The wikipedia page text to extract the infobox from.</p>
+</dd>
+</dl>
+</section>
+<section id="id46">
+<h4>Returns<a class="headerlink" href="#id46" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>dict</dt><dd><p>The infobox as a dictionary.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.remove_appendix_sections">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">remove_appendix_sections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#remove_appendix_sections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.remove_appendix_sections" title="Link to this definition">¶</a></dt>
+<dd><p>Remove sections like References, Notes, etc. from the text.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.remove_comments_and_citations">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">remove_comments_and_citations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#remove_comments_and_citations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.remove_comments_and_citations" title="Link to this definition">¶</a></dt>
+<dd><p>Return the text without comments and citations.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.replace_file_links_with_captions">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">replace_file_links_with_captions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#replace_file_links_with_captions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.replace_file_links_with_captions" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.replace_nsbp_by_spaces">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">replace_nsbp_by_spaces</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#replace_nsbp_by_spaces"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.replace_nsbp_by_spaces" title="Link to this definition">¶</a></dt>
+<dd><p>Replace spaces with underscores in the text.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="wiki_dump_extractor.page_utils.replace_titles_with_section_headers">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.page_utils.</span></span><span class="sig-name descname"><span class="pre">replace_titles_with_section_headers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">text</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/page_utils.html#replace_titles_with_section_headers"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.page_utils.replace_titles_with_section_headers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</section>
+<section id="download-utilities">
+<h3>Download Utilities<a class="headerlink" href="#download-utilities" title="Link to this heading">¶</a></h3>
+<dl class="py function" id="module-wiki_dump_extractor.download_utils">
+<dt class="sig sig-object py" id="wiki_dump_extractor.download_utils.download_file">
+<span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.download_utils.</span></span><span class="sig-name descname"><span class="pre">download_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">url</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">replace</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/download_utils.html#download_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.download_utils.download_file" title="Link to this definition">¶</a></dt>
+<dd><p>Download a web file to a filepath, with the option to skip.</p>
+</dd></dl>
+
+</section>
+<section id="llm-utilities">
+<h3>LLM Utilities<a class="headerlink" href="#llm-utilities" title="Link to this heading">¶</a></h3>
+</section>
+<section id="sql-extractor">
+<h3>SQL Extractor<a class="headerlink" href="#sql-extractor" title="Link to this heading">¶</a></h3>
+<dl class="py class" id="module-wiki_dump_extractor.wiki_sql_extractor">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">wiki_dump_extractor.wiki_sql_extractor.</span></span><span class="sig-name descname"><span class="pre">WikiSqlExtractor</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_sql_extractor.html#WikiSqlExtractor"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Extracts data from a Wikipedia SQL dump.</p>
+<section id="id47">
+<h4>Parameters<a class="headerlink" href="#id47" title="Link to this heading">¶</a></h4>
+<dl class="simple">
+<dt>file_path<span class="classifier">str or Path</span></dt><dd><p>The path to the Wikipedia SQL dump file.</p>
+</dd>
+</dl>
+</section>
+<section id="id48">
+<h4>Examples<a class="headerlink" href="#id48" title="Link to this heading">¶</a></h4>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="gp">&gt;&gt;&gt; </span><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiSqlExtractor</span><span class="p">(</span><span class="s2">&quot;enwiki-20240301-pages-articles-multistream.xml.bz2&quot;</span><span class="p">)</span>
+</span><span data-line="2"><span class="gp">&gt;&gt;&gt; </span><span class="n">df</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">to_pandas_dataframe</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="o">...</span><span class="p">])</span>
+</span></pre></div>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py" id="wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor.to_pandas_dataframe">
+<span class="sig-name descname"><span class="pre">to_pandas_dataframe</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">columns</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_rows</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">row_filter</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/wiki_dump_extractor/wiki_sql_extractor.html#WikiSqlExtractor.to_pandas_dataframe"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#wiki_dump_extractor.wiki_sql_extractor.WikiSqlExtractor.to_pandas_dataframe" title="Link to this definition">¶</a></dt>
+<dd><p>Reads the data from the database and returns a pandas DataFrame.</p>
+<p>This is optimized for memory consumption.</p>
+<section id="id49">
+<h5>Parameters<a class="headerlink" href="#id49" title="Link to this heading">¶</a></h5>
+<dl class="simple">
+<dt>row_filter<span class="classifier">callable, optional</span></dt><dd><p>A function that takes a record and returns True if the record
+should be included in the DataFrame.</p>
+</dd>
+<dt>columns<span class="classifier">list, optional</span></dt><dd><p>A list of columns to include in the DataFrame.</p>
+</dd>
+<dt>max_rows<span class="classifier">int, optional</span></dt><dd><p>The maximum number of rows to read from the database.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+</section>
+</section>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-prev">
+    <a href="index.html">
+      <i class="i-lucide chevron-left"></i>
+      <div class="page-info">
+        <span>Previous</span><div class="title">Home</div></div>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Zulko</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/shibuya.js?v=e2e99575"></script></body>
+</html>

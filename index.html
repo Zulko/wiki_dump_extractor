@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-accent-color="violet" data-content_root="./">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>wiki_dump_extractor 0.1 documentation</title><link rel="index" title="Index" href="genindex.html" /><link rel="search" title="Search" href="search.html" /><link rel="next" title="Wiki Dump Extractor Reference" href="ref.html" /><script>
+    function setColorMode(t){let e=document.documentElement;e.setAttribute("data-color-mode",t);let a=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches,s=t;"auto"===t&&(s=a?"dark":"light"),"light"===s?(e.classList.remove("dark"),e.classList.add("light")):(e.classList.remove("light"),e.classList.add("dark"))}
+    setColorMode(localStorage._theme||"auto");
+  </script><link rel="stylesheet" type="text/css" href="_static/pygments.css?v=397bb51e" />
+    <link rel="stylesheet" type="text/css" href="_static/shibuya.css?v=83eaa723" />
+    <link media="print" rel="stylesheet" type="text/css" href="_static/print.css?v=20ff2c19" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --sy-f-text: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+  --sy-f-heading: "Inter", var(--sy-f-sys), var(--sy-f-cjk), sans-serif;
+}
+</style>
+    <meta property="og:type" content="website"/><meta property="og:title" content="Wiki dump extractor"/>
+<meta name="twitter:card" content="summary"/>
+  </head>
+<body><div class="sy-head">
+  <div class="sy-head-blur"></div>
+  <div class="sy-head-inner sy-container mx-auto">
+    <a class="sy-head-brand" href="#">
+      
+      
+      <strong>wiki_dump_extractor</strong>
+    </a>
+    <div class="sy-head-nav" id="HeadNav">
+      <nav class="sy-head-links"></nav>
+      <div class="sy-head-extra flex items-center print:hidden"><form class="searchbox flex items-center" action="search.html" method="get">
+  <input type="text" name="q" placeholder="Search" />
+  <kbd>/</kbd>
+</form><div class="sy-head-socials"></div></div>
+    </div>
+    <div class="sy-head-actions flex items-center shrink-0 print:hidden"><button class="js-theme theme-switch flex items-center"
+data-aria-auto="Switch to light color mode"
+data-aria-light="Switch to dark color mode"
+data-aria-dark="Switch to auto color mode">
+<i class="i-lucide theme-icon"></i>
+</button><button class="md:hidden flex items-center js-menu" aria-label="Menu" type="button" aria-controls="HeadNav" aria-expanded="false">
+        <div class="hamburger">
+          <span class="hamburger_1"></span>
+          <span class="hamburger_2 -translate-x-2"></span>
+          <span class="hamburger_3 -translate-x-1"></span>
+        </div>
+      </button>
+    </div>
+  </div>
+</div>
+<div class="sy-page sy-container flex mx-auto">
+  <aside id="lside" class="sy-lside md:w-72 md:shrink-0 print:hidden">
+    <div class="sy-lside-inner md:sticky">
+      <div class="sy-scrollbar p-6">
+        <div class="globaltoc" data-expand-depth="0"><p class="caption" role="heading" aria-level="3"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ref.html">Wiki Dump Extractor Reference</a></li>
+</ul>
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="lside-overlay js-menu" role="button" aria-label="Close left sidebar" aria-controls="lside" aria-expanded="false"></div>
+  <aside id="rside" class="sy-rside pb-3 w-64 shrink-0 order-last">
+    <button class="rside-close js-menu xl:hidden" aria-label="Close Table of Contents" type="button" aria-controls="rside" aria-expanded="false">
+      <i class="i-lucide close"></i>
+    </button>
+    <div class="sy-scrollbar sy-rside-inner px-6 xl:top-16 xl:sticky xl:pl-0 pt-6 pb-4"><div class="localtoc"><h3>On this page</h3><ul>
+<li><a class="reference internal" href="#scope">Scope</a></li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#converting-the-dump-to-avro">Converting the dump to Avro</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#installation">Installation</a><ul>
+<li><a class="reference internal" href="#requirements-for-running-the-llm-utils">Requirements for running the LLM utils</a></li>
+</ul>
+</li>
+</ul>
+</div><div id="ethical-ad-placement" data-ea-publisher="readthedocs"></div></div>
+  </aside>
+  <div class="rside-overlay js-menu" role="button" aria-label="Close Table of Contents" aria-controls="rside" aria-expanded="false"></div>
+  <main class="sy-main w-full max-sm:max-w-full print:pt-6"><div class="sy-breadcrumbs" role="navigation">
+  <div class="sy-breadcrumbs-inner flex items-center">
+    <div class="md:hidden mr-3">
+      <button class="js-menu" aria-label="Menu" type="button" aria-controls="lside" aria-expanded="false">
+        <i class="i-lucide menu"></i>
+      </button>
+    </div>
+    <ol class="flex-1" itemscope itemtype="https://schema.org/BreadcrumbList"><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <a itemprop="item" href="#"><span itemprop="name">wiki_dump_extractor</span></a>
+        <span>/</span>
+        <meta itemprop="position" content="1" />
+      </li><li itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+        <strong itemprop="name">Wiki dump extractor</strong>
+        <meta itemprop="position" content="2" />
+      </li></ol>
+    <div class="xl:hidden ml-1">
+      <button class="js-menu" aria-label="Show table of contents" type="button" aria-controls="rside"
+        aria-expanded="false">
+        <i class="i-lucide outdent"></i>
+      </button>
+    </div>
+  </div>
+</div><div class="flex flex-col break-words justify-between">
+      <div class="min-w-0 max-w-6xl px-6 pb-6 pt-8 xl:px-12">
+        <article class="yue" role="main">
+          <section id="wiki-dump-extractor">
+<h1>Wiki dump extractor<a class="headerlink" href="#wiki-dump-extractor" title="Link to this heading">¶</a></h1>
+<p>A python library to extract and analyze pages from a wiki dump.</p>
+<p>This library is used in particular in the <a class="reference external" href="https://github.com/Zulko/landnotes">Landnotes</a> project to extract and analyze pages from the Wikipedia dump.</p>
+<p>The project is hosted on <a class="reference external" href="https://github.com/zulko/wiki_dump_extractor">GitHub</a> an the HTML documentation is available <a class="reference external" href="https://zulko.github.io/wiki_dump_extractor/">here</a>.</p>
+<section id="scope">
+<h2>Scope<a class="headerlink" href="#scope" title="Link to this heading">¶</a></h2>
+<p>Make the wikipedia dumps easier to work with:</p>
+<ul class="simple">
+<li><p>Extract pages from a wiki dump</p></li>
+<li><p>Be easy to install and run</p></li>
+<li><p>Be fast (can iterate over 50,000 pages / secong using Avro)</p></li>
+<li><p>Be memory efficient</p></li>
+<li><p>Allow for batch processing and parallel processing</p></li>
+</ul>
+<p>Provide utilities for page analysis:</p>
+<ul class="simple">
+<li><p>Date parsing</p></li>
+<li><p>Section extraction</p></li>
+<li><p>Text cleaning</p></li>
+<li><p>and more.</p></li>
+</ul>
+</section>
+<section id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Link to this heading">¶</a></h2>
+<p>To simply iterate over the pages in the dump:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">wiki_dump_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">WikiDumpExtractor</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">dump_file</span> <span class="o">=</span> <span class="s2">&quot;enwiki-20220301-pages-articles-multistream.xml.bz2&quot;</span>
+</span><span data-line="4"><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiDumpExtractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">dump_file</span><span class="p">)</span>
+</span><span data-line="5"><span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">extractor</span><span class="o">.</span><span class="n">iter_pages</span><span class="p">(</span><span class="n">limit</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+</span><span data-line="6">    <span class="nb">print</span><span class="p">(</span><span class="n">page</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>To extract the pages by batches (here we save the pages separate CSV files):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">wiki_dump_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">WikiDumpExtractor</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">dump_file</span> <span class="o">=</span> <span class="s2">&quot;enwiki-20220301-pages-articles-multistream.xml.bz2&quot;</span>
+</span><span data-line="4"><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiDumpExtractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">dump_file</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">batches</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">iter_page_batches</span><span class="p">(</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+</span><span data-line="6"><span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">batch</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">batches</span><span class="p">):</span>
+</span><span data-line="7">    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">([</span><span class="n">page</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">page</span> <span class="ow">in</span> <span class="n">batch</span><span class="p">])</span>
+</span><span data-line="8">    <span class="n">df</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;batch_</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.csv&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<section id="converting-the-dump-to-avro">
+<h3>Converting the dump to Avro<a class="headerlink" href="#converting-the-dump-to-avro" title="Link to this heading">¶</a></h3>
+<p>There are many reasons why you might want to convert the dump to Avro. The original <code class="docutils literal notranslate"><span class="pre">xml.bz2</span></code> dump is 22Gb but very slow to read from (250/s), the uncompressed dump is 107Gb, relatively fast to read (this library uses lxml which reads thousands of pages per second), however 50% of the pages in there are empty redirect pages.</p>
+<p>The following code converts the batch to a 28G avro dump that only contains the 12 million real pages, stores redirects in a fast LMDB database, and creates an index for quick page lookups. The operation takes ~40 minutes depending on your machine.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">wiki_dump_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">WikiXmlDumpExtractor</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">file_path</span> <span class="o">=</span> <span class="s2">&quot;enwiki-20250201-pages-articles-multistream.xml&quot;</span>
+</span><span data-line="4"><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiXmlDumpExtractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="n">file_path</span><span class="p">)</span>
+</span><span data-line="5"><span class="n">ignored_fields</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;timestamp&quot;</span><span class="p">,</span> <span class="s2">&quot;page_id&quot;</span><span class="p">,</span> <span class="s2">&quot;revision_id&quot;</span><span class="p">,</span> <span class="s2">&quot;redirect_title&quot;</span><span class="p">]</span>
+</span><span data-line="6"><span class="n">extractor</span><span class="o">.</span><span class="n">extract_pages_to_avro</span><span class="p">(</span>
+</span><span data-line="7">    <span class="n">output_file</span><span class="o">=</span><span class="s2">&quot;wiki_dump.avro&quot;</span><span class="p">,</span>
+</span><span data-line="8">    <span class="n">redirects_db_path</span><span class="o">=</span><span class="s2">&quot;redirects.lmdb&quot;</span><span class="p">,</span>  <span class="c1"># LMDB database for fast redirect lookups</span>
+</span><span data-line="9">    <span class="n">ignored_fields</span><span class="o">=</span><span class="n">ignored_fields</span><span class="p">,</span>
+</span><span data-line="10"><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Then index the pages for fast lookups:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">wiki_dump_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">WikiAvroDumpExtractor</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiAvroDumpExtractor</span><span class="p">(</span><span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;wiki_dump.avro&quot;</span><span class="p">)</span>
+</span><span data-line="4"><span class="n">extractor</span><span class="o">.</span><span class="n">index_pages</span><span class="p">(</span><span class="n">page_index_db</span><span class="o">=</span><span class="s2">&quot;page_index.lmdb&quot;</span><span class="p">)</span>
+</span></pre></div>
+</div>
+<p>Later on, read the Avro file and use redirects and index as follows (reads the 12 million pages in ~3-4 minutes depending on your machine):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="kn">from</span><span class="w"> </span><span class="nn">wiki_dump_extractor</span><span class="w"> </span><span class="kn">import</span> <span class="n">WikiAvroDumpExtractor</span>
+</span><span data-line="2">
+</span><span data-line="3"><span class="c1"># Create extractor</span>
+</span><span data-line="4"><span class="n">extractor</span> <span class="o">=</span> <span class="n">WikiAvroDumpExtractor</span><span class="p">(</span>
+</span><span data-line="5">    <span class="n">file_path</span><span class="o">=</span><span class="s2">&quot;wiki_dump.avro&quot;</span><span class="p">,</span>
+</span><span data-line="6">    <span class="n">index_dir</span><span class="o">=</span><span class="s2">&quot;page_index.lmdb&quot;</span>  <span class="c1"># Use the index for faster lookups</span>
+</span><span data-line="7"><span class="p">)</span>
+</span><span data-line="8">
+</span><span data-line="9"><span class="c1"># Get pages with automatic redirect resolution</span>
+</span><span data-line="10"><span class="n">pages</span> <span class="o">=</span> <span class="n">extractor</span><span class="o">.</span><span class="n">get_page_batch_by_title</span><span class="p">(</span>
+</span><span data-line="11">    <span class="p">[</span><span class="s2">&quot;Page Title 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Page Title 2&quot;</span><span class="p">]</span>
+</span><span data-line="12"><span class="p">)</span>
+</span></pre></div>
+</div>
+</section>
+</section>
+<section id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">¶</a></h2>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>wiki-dump-extractor
+</span></pre></div>
+</div>
+<p>Or from the source in development mode:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</span></pre></div>
+</div>
+<p>To use the LLM-specific module (that would be mostly if you are on a project like Landnotes), use</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>wiki-dump-extractor<span class="o">[</span>llm<span class="o">]</span>
+</span></pre></div>
+</div>
+<p>Or locally:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1">pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[llm]&quot;</span>
+</span></pre></div>
+</div>
+<p>To install with tests, use <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[dev]&quot;</span></code> then run the tests with <code class="docutils literal notranslate"><span class="pre">pytest</span></code> in the root directory.</p>
+<section id="requirements-for-running-the-llm-utils">
+<h3>Requirements for running the LLM utils<a class="headerlink" href="#requirements-for-running-the-llm-utils" title="Link to this heading">¶</a></h3>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span data-line="1"><span class="c1"># Add the Cloud SDK distribution URI as a package source</span>
+</span><span data-line="2"><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>/etc/apt/sources.list.d/google-cloud-sdk.list
+</span><span data-line="3">
+</span><span data-line="4"><span class="c1"># Import the Google Cloud public key</span>
+</span><span data-line="5">curl<span class="w"> </span>https://packages.cloud.google.com/apt/doc/apt-key.gpg<span class="w"> </span><span class="p">|</span><span class="w"> </span>sudo<span class="w"> </span>apt-key<span class="w"> </span>--keyring<span class="w"> </span>/usr/share/keyrings/cloud.google.gpg<span class="w"> </span>add<span class="w"> </span>-
+</span><span data-line="6">
+</span><span data-line="7"><span class="c1"># Update the package list and install the Cloud SDK</span>
+</span><span data-line="8">sudo<span class="w"> </span>apt-get<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>sudo<span class="w"> </span>apt-get<span class="w"> </span>install<span class="w"> </span>google-cloud-sdk
+</span></pre></div>
+</div>
+</section>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="ref.html">Wiki Dump Extractor Reference</a></li>
+</ul>
+</div>
+
+        </article><button class="back-to-top" type="button">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+  </svg>
+  <span>Back to top</span>
+</button><div class="navigation flex print:hidden"><div class="navigation-next">
+    <a href="ref.html">
+      <div class="page-info">
+        <span>Next</span>
+        <div class="title">Wiki Dump Extractor Reference</div>
+      </div>
+      <i class="i-lucide chevron-right"></i>
+    </a>
+  </div></div></div>
+    </div>
+  </main>
+</div>
+<footer class="sy-foot">
+  <div class="sy-foot-inner sy-container mx-auto">
+    <div class="sy-foot-reserved md:flex justify-between items-center">
+      <div class="sy-foot-copyright"><p>2025, Zulko</p>
+  
+  <p>
+    Made with
+    
+    <a href="https://www.sphinx-doc.org/">Sphinx</a> and
+    
+    <a href="https://shibuya.lepture.com">Shibuya theme</a>.
+  </p>
+</div>
+      <div class="sy-foot-socials"></div>
+    </div>
+  </div>
+</footer>
+      <script src="_static/documentation_options.js?v=2709fde1"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script src="_static/shibuya.js?v=e2e99575"></script></body>
+</html>
