@@ -29,6 +29,11 @@ import aiostream
 from .page_utils import extract_categories
 
 
+def _child_text(elem: etree.Element, path: str) -> Optional[str]:
+    child = elem.find(path)
+    return child.text if child is not None else None
+
+
 @dataclass
 class Page:
     """
@@ -91,19 +96,33 @@ class Page:
         redirect_title = (
             redirect_elem.get("title") if redirect_elem is not None else None
         )
-        timestamp = elem.find(f".//{{{namespace}}}timestamp").text
+
+        timestamp_str = _child_text(elem, f".//{{{namespace}}}timestamp")
+        timestamp = None
+        if timestamp_str:
+            try:
+                timestamp = datetime.strptime(timestamp_str, "%Y-%m-%dT%H:%M:%SZ")
+            except ValueError:
+                timestamp = None
+
         revision = elem.find(f".//{{{namespace}}}revision")
+        revision_id = ""
         if revision is not None:
-            revision_id = revision.find(f"./{{{namespace}}}id")
-            if revision_id is not None:
-                revision_id = revision_id.text
+            revision_id = _child_text(revision, f"./{{{namespace}}}id") or ""
+
+        page_id_text = _child_text(elem, f"./{{{namespace}}}id")
+        try:
+            page_id = int(page_id_text) if page_id_text else 0
+        except ValueError:
+            page_id = 0
+
         return cls(
-            page_id=int(elem.find(f"./{{{namespace}}}id").text),
-            title=elem.find(f"./{{{namespace}}}title").text,
-            timestamp=datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%SZ"),
+            page_id=page_id,
+            title=_child_text(elem, f"./{{{namespace}}}title") or "",
+            timestamp=timestamp,
             redirect_title=redirect_title,
             revision_id=revision_id,
-            text=elem.find(f".//{{{namespace}}}text").text,
+            text=_child_text(elem, f".//{{{namespace}}}text") or "",
         )
 
     def get_wikipedia_url(self) -> str:
