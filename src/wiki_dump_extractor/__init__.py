@@ -1,6 +1,6 @@
 """My Project package."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.2"
 
 from .wiki_dump_extractor import WikiXmlDumpExtractor, WikiAvroDumpExtractor
 from .wiki_sql_extractor import WikiSqlExtractor
